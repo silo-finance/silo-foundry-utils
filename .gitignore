@@ -1,3 +1,6 @@
+.vscode
+bash/.anvil-pid.txt
+
 # Compiler files
 cache/
 out/
@@ -5,15 +8,18 @@ out/
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
+/broadcast/*/9119/
 /broadcast/**/dry-run/
 
-# Docs
-docs/
+# Ignores development deployments
+/deployments/31337
+/deployments/9119
 
 # Dotenv file
 .env
 
-
 # Added by cargo
-
 /target
+
+# Silo foundry utils build
+silo-foundry-utils
