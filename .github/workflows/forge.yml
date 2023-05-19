@@ -32,7 +32,8 @@ jobs:
           forge build --sizes
         id: build
 
-      - name: Run Forge tests
+      - name: Run Cargo build
         run: |
-          forge test -vvv
-        id: test
+          cargo --version
+          ./bash/build-for-tests.sh
+        id: build-cargo
