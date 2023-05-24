@@ -8,6 +8,7 @@ contract VyperCounterDeploy is Deployer {
      uint256 public testMultiplier = 100;
 
     string constant BASE_DIR = "test/deployer/mocks";
+    string constant DEPLOYMENTS_SUB_DIR = "";
     string constant FILE = "Counter.vy";
 
     function setUp() public {}
@@ -20,7 +21,12 @@ contract VyperCounterDeploy is Deployer {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        counter = _deploy(BASE_DIR, FILE, abi.encodePacked(testMultiplier));
+        counter = _deploy(
+            BASE_DIR,
+            DEPLOYMENTS_SUB_DIR,
+            FILE,
+            abi.encodePacked(testMultiplier)
+        );
 
         vm.stopBroadcast();
 
