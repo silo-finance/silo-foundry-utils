@@ -11,6 +11,7 @@ contract Deployer is VyperDeployer {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
+        string deploymentsSubDir; // The directory for the ABI allocation `deploymentsSubDir/deployments/<network>`
         string bytecode; // The bytecode of the deployed smart contract
         string deployedByteCode; // The deployed bytecode of the deployed smart contract
         string contractABI; // An ABI of the deployed smart contract
@@ -42,10 +43,12 @@ contract Deployer is VyperDeployer {
 
     /// @notice Deploy smart contract
     /// @param _folder The smart contract allocation folder
+    /// @param _deploymentsSubDir The directory for the ABI allocation
     /// @param _fileName The smart contract file name with an extension: `Counter.vy`
     /// @return deployedAddress An address of the deployed smart contract
     function _deploy(
         string memory _folder,
+        string memory _deploymentsSubDir,
         string memory _fileName,
         bytes memory _args
     )
@@ -69,6 +72,7 @@ contract Deployer is VyperDeployer {
 
         deployments.push(Deployment({
             name: _fileName,
+            deploymentsSubDir: _deploymentsSubDir,
             addr: deployedAddress,
             bytecode: bytecode,
             deployedByteCode: deployedByteCode,
@@ -94,7 +98,13 @@ contract Deployer is VyperDeployer {
             string memory contractABI = deployment.contractABI;
 
             if (bytes(contractABI).length != 0) {
-                 string[] memory cmds = new string[](16);
+                uint256 cmdLen = 16;
+
+                if (bytes(deployment.deploymentsSubDir).length != 0) {
+                    cmdLen += 2;
+                }
+
+                string[] memory cmds = new string[](cmdLen);
                 cmds[0] = "./silo-foundry-utils";
                 cmds[1] = "sync";
                 cmds[2] = "--network"; cmds[3] = getChainIdAsString();
@@ -104,6 +114,10 @@ contract Deployer is VyperDeployer {
                 cmds[10] = "--d_bytecode"; cmds[11] = deployment.deployedByteCode;
                 cmds[12] = "--abi"; cmds[13] = deployment.contractABI;
                 cmds[14] = "--compiler"; cmds[15] = deployment.compilerVersion;
+
+                if (bytes(deployment.deploymentsSubDir).length != 0) {
+                    cmds[16] = "--deployments_sub_dir"; cmds[17] = deployment.deploymentsSubDir;
+                }
 
                 // run command
                 vm.ffi(cmds);
