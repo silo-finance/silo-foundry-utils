@@ -20,6 +20,9 @@ pub struct Sync {
     /// Network identifier
     #[arg(long = "network")]
     pub network: String,
+    /// Directory
+    #[arg(long = "deployments_sub_dir")]
+    pub deployments_sub_dir: Option<String>,
     /// Relative file path
     #[arg(long = "file")]
     pub file: String,
@@ -44,6 +47,7 @@ pub struct Sync {
  cargo run -- sync \
     --network 31337 \
     --file Counter.vy.json \
+    --deployments_sub_dir some-dir \
     --address 0x5FbDB2315678afecb367f032d93F642f64180aa3 \
     --bytecode 0x346100d5576020...00000000000064 \
     --d_bytecode 0x6003361161...0657283000307000b \
@@ -94,7 +98,18 @@ impl Sync {
     }
 
     fn resolve_deployments_dir(&self) -> Result<PathBuf, Box<dyn std::error::Error>> {
-        let deployments_dir = env::current_dir().unwrap().join("deployments").join(&self.network);
+        let mut deployments_dir = env::current_dir().unwrap();
+
+        match &self.deployments_sub_dir {
+            Some(deployments_sub_dir) => {
+                deployments_dir = deployments_dir.join(deployments_sub_dir);
+            }
+            None => {}
+        }
+
+        deployments_dir = deployments_dir.join("deployments").join(&self.network);
+
+        println!("{}", deployments_dir.display());
 
         if !deployments_dir.is_dir() {
             let result = fs::create_dir_all(&deployments_dir);
