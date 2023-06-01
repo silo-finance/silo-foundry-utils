@@ -57,4 +57,5 @@
 
 ## Utilities
 
-* [Vyper deployer](docs/vyper-depolyer.md)
+* [Vyper deployer](docs/VyperDeployer.md)
+* [Shared addresses collection](docs/SharedAddressesSpace.md)

@@ -4,6 +4,9 @@ pragma solidity 0.8.19;
 import "./Vyper.sol";
 
 contract Deployer is VyperDeployer {
+    // Note: IS_SCRIPT() must return true.
+    bool public IS_SCRIPT = true;
+
     /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
     /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
     bool public deploymentsSyncDisabled;
