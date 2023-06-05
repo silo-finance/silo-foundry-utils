@@ -52,10 +52,12 @@
 1. Run tests with `forge`
 
    ```bash
-   forge test --ffi -vvv && ./bash/kill-anvil.sh
+   forge test --match-contract DeployVyperTest --ffi -vvv && ./bash/kill-anvil.sh
+   forge test --match-contract DeploySolidityTest --ffi -vvv && ./bash/kill-anvil.sh
    ```
 
 ## Utilities
 
 * [Vyper deployer](docs/VyperDeployer.md)
+* [Solidity deployments synchronization](docs/SolidityDeploymentsSync.md)
 * [Shared addresses collection](docs/SharedAddressesSpace.md)
