@@ -4,17 +4,17 @@ pragma solidity 0.8.19;
 import { CommonDeploymentTest } from "./_common.sol";
 
 import "./mocks/ICounter.sol";
-import "./deployments-scripts/VyperCounterDeploy.s.sol";
+import "./deployments-scripts/SolidityCounterDeploy.s.sol";
 
 // ./bash/build-for-tests.sh
-// forge clean && forge test --match-contract DeployVyperTest --ffi -vvv && ./bash/kill-anvil.sh
-contract DeployVyperTest is CommonDeploymentTest {
-    string internal constant FILE = "Counter.vy";
-    string internal constant DEPLOYMENT_SCRIPT = "test/deployer/deployments-scripts/VyperCounterDeploy.s.sol";
-    uint256 internal constant MULTIPLIER = 100;
+// forge clean && forge test --match-contract DeploySolidityTest --ffi -vvv && ./bash/kill-anvil.sh
+contract DeploySolidityTest is CommonDeploymentTest {
+    string internal constant FILE = "Counter.sol";
+    string internal constant DEPLOYMENT_SCRIPT = "test/deployer/deployments-scripts/SolidityCounterDeploy.s.sol";
+    uint256 internal constant MULTIPLIER = 111;
 
     function test_deployment_script_in_tests() public {
-        VyperCounterDeploy script = new VyperCounterDeploy();
+        SolidityCounterDeploy script = new SolidityCounterDeploy();
         script.disableDeploymentsSync();
 
         address counterAddr = script.run();

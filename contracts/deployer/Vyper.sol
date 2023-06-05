@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "forge-std/Script.sol";
+import { ScriptBase } from "forge-std/Base.sol";
 
-contract VyperDeployer is Script {
+contract VyperDeployer is ScriptBase {
     error FailedToDeploy(string _filePath, bytes _args);
 
     ///@notice Compiles a Vyper contract with constructor arguments and returns the address that the contract was deployeod to
