@@ -50,3 +50,4 @@ Addresses collection is a shared space designed to share addresses between smart
     assertEq(addr1, b.getAddress(KEY_1));
     assertEq(addr2, a.getAddress(KEY_2));
     ```
+    [See an example](./../test/addresses/AddressesCollectionTest.sol).
