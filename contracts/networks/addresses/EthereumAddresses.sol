@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "forge-std/console.sol";
-
-import "./AddressesCollectionStorage.sol";
+import {AddressesCollectionStorage} from "./AddressesCollectionStorage.sol";
 
 abstract contract EthereumAddresses is AddressesCollectionStorage {
     function initializeEthereumAddresses() public {

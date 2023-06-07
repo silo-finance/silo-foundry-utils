@@ -1,16 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "./Vyper.sol";
+import {Chains} from "../networks/Chains.sol";
+import {VyperDeployer} from "./Vyper.sol";
 
-contract Deployer is VyperDeployer {
-    // Note: IS_SCRIPT() must return true.
-    bool public IS_SCRIPT = true;
-
-    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
-    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
-    bool public deploymentsSyncDisabled;
-
+contract Deployer is VyperDeployer, Chains {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
@@ -24,8 +18,15 @@ contract Deployer is VyperDeployer {
         bool synced; // The flag shows whether the smart contract is already synced or not
     }
 
+    // Note: IS_SCRIPT() must return true.
+    bool public constant IS_SCRIPT = true;
+
+    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
+    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
+    bool public deploymentsSyncDisabled;
+
     /// @dev The list of the deployments
-    Deployment[] private deployments;
+    Deployment[] private _deployments;
 
     /// @dev Revert on an attemp to register `solidity` deployment with specifying the Forge `out` dir
     error ForgeOutDirIsRequired();
@@ -41,14 +42,6 @@ contract Deployer is VyperDeployer {
     /// @notice Enables deployments synchronization
     function enableDeploymentsSync() external {
         deploymentsSyncDisabled = false;
-    }
-
-    /// @notice Resolves a chain identifier
-    /// @return chainIdAsString The chain identifier
-    function getChainIdAsString() public view returns (string memory chainIdAsString) {
-        uint256 currentChainID;
-        assembly { currentChainID := chainid() }
-        chainIdAsString = vm.toString(currentChainID);
     }
 
     /// @notice Deploy smart contract
@@ -71,12 +64,12 @@ contract Deployer is VyperDeployer {
 
     /// @notice Deploy smart contract
     /// @param _folder The smart contract allocation folder
-    /// @param _SubDir The directory for the ABI allocation
+    /// @param _subDir The directory for the ABI allocation
     /// @param _fileName The smart contract file name with an extension: `Counter.vy`
     /// @return deployedAddress An address of the deployed smart contract
     function _deploy(
         string memory _folder,
-        string memory _SubDir,
+        string memory _subDir,
         string memory _fileName,
         bytes memory _args
     )
@@ -100,9 +93,9 @@ contract Deployer is VyperDeployer {
 
         string memory empty;
 
-        deployments.push(Deployment({
+        _deployments.push(Deployment({
             name: _fileName,
-            deploymentsSubDir: _SubDir,
+            deploymentsSubDir: _subDir,
             addr: deployedAddress,
             bytecode: bytecode,
             deployedByteCode: deployedByteCode,
@@ -133,7 +126,7 @@ contract Deployer is VyperDeployer {
     /// @notice Register deployed smart contract
     function _registerDeployment(
         address _deployedAddress,
-        string memory _SubDir,
+        string memory _subDir,
         string memory _fileName,
         string memory _outDir
     )
@@ -143,9 +136,9 @@ contract Deployer is VyperDeployer {
 
         string memory empty;
 
-        deployments.push(Deployment({
+        _deployments.push(Deployment({
             name: _fileName,
-            deploymentsSubDir: _SubDir,
+            deploymentsSubDir: _subDir,
             addr: _deployedAddress,
             bytecode: empty,
             deployedByteCode: empty,
@@ -160,10 +153,10 @@ contract Deployer is VyperDeployer {
     function _syncDeployments() internal {
         if (deploymentsSyncDisabled) return;
 
-        uint256 totalDeployments = deployments.length;
+        uint256 totalDeployments = _deployments.length;
 
         for (uint i = 0; i < totalDeployments; i++) {
-            Deployment storage deployment = deployments[i];
+            Deployment storage deployment = _deployments[i];
 
             if (deployment.synced) continue;
 
@@ -178,6 +171,12 @@ contract Deployer is VyperDeployer {
             deployment.synced = true;
         }
     }
+
+    function _forgeOutDir() internal pure virtual returns (string memory) {}
+
+    function _deploymentsSubDir() internal pure virtual returns (string memory) {}
+
+    function _contractBaseDir() internal pure virtual returns (string memory) {}
 
     function _syncSolidityDeployments(Deployment storage deployment) private {
         uint256 cmdLen = 10;
@@ -226,8 +225,4 @@ contract Deployer is VyperDeployer {
         // run command
         vm.ffi(cmds);
     }
-
-    function _forgeOutDir() internal pure virtual returns (string memory) {}
-    function _deploymentsSubDir() internal pure virtual returns (string memory) {}
-    function _contractBaseDir() internal pure virtual returns (string memory) {}
 }

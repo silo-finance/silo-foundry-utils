@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "./EthereumAddresses.sol";
+import {EthereumAddresses} from "./EthereumAddresses.sol";
+import {IAddressCollection} from "./IAddressCollection.sol";
 
 contract AddressesCollection is EthereumAddresses {
     constructor() {
@@ -20,6 +21,6 @@ contract AddressesCollection is EthereumAddresses {
     /// @param _chainId A chain identifier for which we want to resolve an address
     /// @param _key The key to resolving an address
     function getAddress(uint256 _chainId, string memory _key) public view returns (address) {
-        return IAddressCollection(ADDRESS_COLLECTION).getAddress(_chainId, _key);
+        return IAddressCollection(_ADDRESS_COLLECTION).getAddress(_chainId, _key);
     }
 }

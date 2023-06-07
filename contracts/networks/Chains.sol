@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "forge-std/StdChains.sol";
+import {StdChains} from "forge-std/StdChains.sol";
+import {ScriptBase} from "forge-std/Base.sol";
 
-abstract contract Chains is StdChains {
+abstract contract Chains is StdChains, ScriptBase {
     string public constant ANVIL_ALIAS = "anvil";
     string public constant MAINNET_ALIAS = "mainnet";
     string public constant GOERLI_ALIAS = "goerli";
@@ -21,11 +22,22 @@ abstract contract Chains is StdChains {
     string public constant BNB_SMART_CHAIN_TESTNET_ALIAS = "bnb_smart_chain_testnet";
     string public constant GNOSIS_CHAIN_ALIAS = "gnosis_chain";
 
-    function getChainId() public view returns (uint256 id) {
-        assembly { id := chainid() }
-    }
-
+    /// @notice Resolves a chain RPC URL
     function getChainRpcUrl(string memory _alias) public returns (string memory) {
         return getChain(_alias).rpcUrl;
+    }
+    
+    /// @notice Resolves a chain identifier
+    /// @return id The chain identifier
+    function getChainId() public view returns (uint256 id) {
+        assembly { id := chainid() } // solhint-disable-line no-inline-assembly
+    }
+
+    /// @notice Resolves a chain identifier
+    /// @return chainIdAsString The chain identifier
+    function getChainIdAsString() public view returns (string memory chainIdAsString) {
+        uint256 currentChainID;
+        assembly { currentChainID := chainid() } // solhint-disable-line no-inline-assembly
+        chainIdAsString = vm.toString(currentChainID);
     }
 }
