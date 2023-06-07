@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "forge-std/StdChains.sol";
+import {StdChains} from "forge-std/StdChains.sol";
 
 abstract contract Chains is StdChains {
     string public constant ANVIL_ALIAS = "anvil";
@@ -21,11 +21,11 @@ abstract contract Chains is StdChains {
     string public constant BNB_SMART_CHAIN_TESTNET_ALIAS = "bnb_smart_chain_testnet";
     string public constant GNOSIS_CHAIN_ALIAS = "gnosis_chain";
 
-    function getChainId() public view returns (uint256 id) {
-        assembly { id := chainid() }
-    }
-
     function getChainRpcUrl(string memory _alias) public returns (string memory) {
         return getChain(_alias).rpcUrl;
+    }
+
+    function getChainId() public view returns (uint256 id) {
+        assembly { id := chainid() } // solhint-disable-line no-inline-assembly
     }
 }

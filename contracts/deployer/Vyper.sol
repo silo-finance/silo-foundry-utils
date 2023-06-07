@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import { ScriptBase } from "forge-std/Base.sol";
+import {ScriptBase} from "forge-std/Base.sol";
 
 contract VyperDeployer is ScriptBase {
     error FailedToDeploy(string _filePath, bytes _args);
 
-    ///@notice Compiles a Vyper contract with constructor arguments and returns the address that the contract was deployeod to
+    ///@notice Compiles a Vyper contract with constructor arguments
+    /// and returns the address that the contract was deployeod to
     ///@notice If deployment fails, an error will be thrown
-    ///@param _filePath - The file name of the Vyper contract. For example, the file name for "SimpleStore.vy" is "SimpleStore"
+    ///@param _filePath - The file name of the Vyper contract.
+    /// For example, the file name for "SimpleStore.vy" is "SimpleStore"
     ///@param _args - The constructor arguments
     ///@return deployedAddress - The address that the contract was deployed to
     ///@return bytecode - The bytecode of the deployed contract
@@ -36,12 +38,9 @@ contract VyperDeployer is ScriptBase {
         // add `_args` to the deployment bytecode
         _bytecode = abi.encodePacked(_bytecode, _args);
 
-        uint256 currentChainID;
-
-        assembly {
+        assembly { // solhint-disable-line no-inline-assembly
             // deploy the bytecode with the `create` instruction
             deployedAddress := create(0, add(_bytecode, 0x20), mload(_bytecode))
-            currentChainID := chainid()
         }
 
         if (deployedAddress == address(0)) revert FailedToDeploy(_filePath, _args);

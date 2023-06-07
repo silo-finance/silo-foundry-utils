@@ -23,3 +23,6 @@ out/
 
 # Silo foundry utils build
 silo-foundry-utils
+
+#node
+node_modules

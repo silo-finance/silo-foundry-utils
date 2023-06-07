@@ -10,7 +10,7 @@ env:
   FOUNDRY_PROFILE: ci
 
 jobs:
-  check:
+  forge-tests:
     strategy:
       fail-fast: true
 
@@ -26,14 +26,18 @@ jobs:
         with:
           version: nightly
 
+      - name: yarn install
+        run: yarn install
+
+      - name: Solidity Lint
+        run: yarn lint:sol
+
       - name: Run Forge build
         run: |
           forge --version
           forge build --sizes
-        id: build
 
       - name: Run Cargo build
         run: |
           cargo --version
           ./bash/build-for-tests.sh
-        id: build-cargo

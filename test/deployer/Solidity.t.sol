@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import { CommonDeploymentTest } from "./_common.sol";
+import {CommonDeploymentTest} from "./_common.sol";
 
-import "./mocks/ICounter.sol";
-import "./deployments-scripts/SolidityCounterDeploy.s.sol";
+import {ICounter} from "./mocks/ICounter.sol";
+import {SolidityCounterDeploy} from "./deployments-scripts/SolidityCounterDeploy.s.sol";
 
 // ./bash/build-for-tests.sh
 // forge clean && forge test --match-contract DeploySolidityTest --ffi -vvv && ./bash/kill-anvil.sh
 contract DeploySolidityTest is CommonDeploymentTest {
-    string internal constant FILE = "Counter.sol";
-    string internal constant DEPLOYMENT_SCRIPT = "test/deployer/deployments-scripts/SolidityCounterDeploy.s.sol";
-    uint256 internal constant MULTIPLIER = 111;
+    string internal constant _FILE = "Counter.sol";
+    string internal constant _DEPLOYMENT_SCRIPT = "test/deployer/deployments-scripts/SolidityCounterDeploy.s.sol";
+    uint256 internal constant _MULTIPLIER = 111;
 
-    function test_deployment_script_in_tests() public {
+    function testDeploymentScriptInTest() public {
         SolidityCounterDeploy script = new SolidityCounterDeploy();
         script.disableDeploymentsSync();
 
@@ -37,15 +37,15 @@ contract DeploySolidityTest is CommonDeploymentTest {
         );
     }
 
-    function getFileName() internal pure override returns (string memory) {
-        return FILE;
+    function _getFileName() internal pure override returns (string memory) {
+        return _FILE;
     }
 
-    function getDeploymentScript() internal pure override returns (string memory) {
-        return DEPLOYMENT_SCRIPT;
+    function _getDeploymentScript() internal pure override returns (string memory) {
+        return _DEPLOYMENT_SCRIPT;
     }
 
-    function getMultiplier() internal pure override returns (uint256) {
-        return MULTIPLIER;
+    function _getMultiplier() internal pure override returns (uint256) {
+        return _MULTIPLIER;
     }
 }

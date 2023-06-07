@@ -1,0 +1,11 @@
+{
+  "name": "silo-foundry-utils",
+  "license": "MIT",
+  "version": "0.0.0",
+  "devDependencies": {
+    "solhint": "~3.4.1"
+  },
+  "scripts": {
+    "lint:sol": "solhint \"contracts/**/*.sol\" \"test/**/*.sol\" --max-warnings=0"
+  }
+}
