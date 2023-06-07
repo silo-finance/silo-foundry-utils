@@ -18,7 +18,6 @@ import {TestBase} from "forge-std/Base.sol";
 import {DSTest} from "ds-test/test.sol";
 
 import {AddressesCollection} from "./addresses/AddressesCollection.sol";
-import {Chains} from "./Chains.sol";
 
 contract IntegrationTest is
     DSTest,
@@ -27,6 +26,5 @@ contract IntegrationTest is
     StdInvariant,
     StdUtils,
     TestBase,
-    Chains,
     AddressesCollection
 {}

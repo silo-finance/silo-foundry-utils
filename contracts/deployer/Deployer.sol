@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import {Chains} from "../networks/Chains.sol";
 import {VyperDeployer} from "./Vyper.sol";
 
-contract Deployer is VyperDeployer {
+contract Deployer is VyperDeployer, Chains {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
@@ -41,14 +42,6 @@ contract Deployer is VyperDeployer {
     /// @notice Enables deployments synchronization
     function enableDeploymentsSync() external {
         deploymentsSyncDisabled = false;
-    }
-
-    /// @notice Resolves a chain identifier
-    /// @return chainIdAsString The chain identifier
-    function getChainIdAsString() public view returns (string memory chainIdAsString) {
-        uint256 currentChainID;
-        assembly { currentChainID := chainid() } // solhint-disable-line no-inline-assembly
-        chainIdAsString = vm.toString(currentChainID);
     }
 
     /// @notice Deploy smart contract
