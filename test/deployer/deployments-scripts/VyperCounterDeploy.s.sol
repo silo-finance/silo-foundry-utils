@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "./_CommonDeploy.sol";
+import {CommonDeploy} from "./_CommonDeploy.sol";
 
-// forge script test/deployer/deployments-scripts/VyperCounterDeploy.s.sol --ffi --broadcast --rpc-url http://127.0.0.1:8545
+/**
+forge script test/deployer/deployments-scripts/VyperCounterDeploy.s.sol \
+    --ffi --broadcast --rpc-url http://127.0.0.1:8545
+ */
 contract VyperCounterDeploy is CommonDeploy {
     uint256 public testMultiplier = 100;
 
@@ -17,7 +20,7 @@ contract VyperCounterDeploy is CommonDeploy {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        counter = _deploy(COUNTER_VY, abi.encodePacked(testMultiplier));
+        counter = _deploy(_COUNTER_VY, abi.encodePacked(testMultiplier));
 
         vm.stopBroadcast();
 

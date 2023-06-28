@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "../mocks/Counter.sol";
-import "./_CommonDeploy.sol";
+import {Counter} from "../mocks/Counter.sol";
+import {CommonDeploy} from "./_CommonDeploy.sol";
 
-// forge script test/deployer/deployments-scripts/SolidityCounterDeploy.s.sol --ffi --broadcast --rpc-url http://127.0.0.1:8545
+/**
+forge script test/deployer/deployments-scripts/SolidityCounterDeploy.s.sol \
+    --ffi --broadcast --rpc-url http://127.0.0.1:8545
+ */
 contract SolidityCounterDeploy is CommonDeploy {
     uint256 public testMultiplier = 111;
 
@@ -20,7 +23,7 @@ contract SolidityCounterDeploy is CommonDeploy {
 
         counter = address(new Counter(testMultiplier));
 
-        _registerDeployment(counter, COUNTER_SOL);
+        _registerDeployment(counter, _COUNTER_SOL);
 
         vm.stopBroadcast();
 

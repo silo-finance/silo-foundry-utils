@@ -1,16 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "./Vyper.sol";
+import {VyperDeployer} from "./Vyper.sol";
+import {AddressesCollection} from "../networks/addresses/AddressesCollection.sol";
+import {IDeployerSharedMemory} from "./IDeployerSharedMemory.sol";
 
-contract Deployer is VyperDeployer {
-    // Note: IS_SCRIPT() must return true.
-    bool public IS_SCRIPT = true;
-
-    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
-    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
-    bool public deploymentsSyncDisabled;
-
+contract Deployer is VyperDeployer, AddressesCollection {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
@@ -24,8 +19,17 @@ contract Deployer is VyperDeployer {
         bool synced; // The flag shows whether the smart contract is already synced or not
     }
 
+    // Note: IS_SCRIPT() must return true.
+    bool public constant IS_SCRIPT = true;
+
+    bool public constant DEPLOYMENTS_SYNC_DISABLED_FLAG = true;
+    bool public constant DEPLOYMENTS_SYNC_ENABLED_FLAG = false;
+
+    address constant public DEPLOYER_SHARED_MEMORY =
+        address(uint160(uint256(keccak256("silo foundry utils: deployer"))));
+
     /// @dev The list of the deployments
-    Deployment[] private deployments;
+    Deployment[] private _deployments;
 
     /// @dev Revert on an attemp to register `solidity` deployment with specifying the Forge `out` dir
     error ForgeOutDirIsRequired();
@@ -34,21 +38,36 @@ contract Deployer is VyperDeployer {
     error InvalidDeployment();
 
     /// @notice Disables deployments synchronization
-    function disableDeploymentsSync() external {
-        deploymentsSyncDisabled = true;
+    function disableDeploymentsSync() public {
+        _mockDeploymentsSyncStatus(DEPLOYMENTS_SYNC_DISABLED_FLAG);
     }
 
     /// @notice Enables deployments synchronization
-    function enableDeploymentsSync() external {
-        deploymentsSyncDisabled = false;
+    function enableDeploymentsSync() public {
+        _mockDeploymentsSyncStatus(DEPLOYMENTS_SYNC_ENABLED_FLAG);
     }
 
-    /// @notice Resolves a chain identifier
-    /// @return chainIdAsString The chain identifier
-    function getChainIdAsString() public view returns (string memory chainIdAsString) {
-        uint256 currentChainID;
-        assembly { currentChainID := chainid() }
-        chainIdAsString = vm.toString(currentChainID);
+    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
+    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
+    function deploymentsSyncDisabled() public view returns (bool result) {
+        (, bytes memory data) = DEPLOYER_SHARED_MEMORY.staticcall(
+            abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector)
+        );
+
+        if (data.length == 0) return DEPLOYMENTS_SYNC_ENABLED_FLAG;
+
+        assembly { // solhint-disable-line no-inline-assembly
+            result := mload(add(data, 0x20))
+        }
+    }
+
+    /// @dev Allocate in the `shared memory` a flag that marks wether the deployments synchronization in enabled or not
+    function _mockDeploymentsSyncStatus(bool _flag) internal {
+        vm.mockCall(
+            DEPLOYER_SHARED_MEMORY,
+            abi.encodeCall(IDeployerSharedMemory.deploymentsSyncDisabled, ()),
+            abi.encode(_flag)
+        );
     }
 
     /// @notice Deploy smart contract
@@ -71,12 +90,12 @@ contract Deployer is VyperDeployer {
 
     /// @notice Deploy smart contract
     /// @param _folder The smart contract allocation folder
-    /// @param _SubDir The directory for the ABI allocation
+    /// @param _subDir The directory for the ABI allocation
     /// @param _fileName The smart contract file name with an extension: `Counter.vy`
     /// @return deployedAddress An address of the deployed smart contract
     function _deploy(
         string memory _folder,
-        string memory _SubDir,
+        string memory _subDir,
         string memory _fileName,
         bytes memory _args
     )
@@ -100,9 +119,9 @@ contract Deployer is VyperDeployer {
 
         string memory empty;
 
-        deployments.push(Deployment({
+        _deployments.push(Deployment({
             name: _fileName,
-            deploymentsSubDir: _SubDir,
+            deploymentsSubDir: _subDir,
             addr: deployedAddress,
             bytecode: bytecode,
             deployedByteCode: deployedByteCode,
@@ -133,7 +152,7 @@ contract Deployer is VyperDeployer {
     /// @notice Register deployed smart contract
     function _registerDeployment(
         address _deployedAddress,
-        string memory _SubDir,
+        string memory _subDir,
         string memory _fileName,
         string memory _outDir
     )
@@ -143,9 +162,9 @@ contract Deployer is VyperDeployer {
 
         string memory empty;
 
-        deployments.push(Deployment({
+        _deployments.push(Deployment({
             name: _fileName,
-            deploymentsSubDir: _SubDir,
+            deploymentsSubDir: _subDir,
             addr: _deployedAddress,
             bytecode: empty,
             deployedByteCode: empty,
@@ -158,14 +177,19 @@ contract Deployer is VyperDeployer {
 
     /// @notice Synchronize deployments by calling an external script
     function _syncDeployments() internal {
-        if (deploymentsSyncDisabled) return;
-
-        uint256 totalDeployments = deployments.length;
+        uint256 totalDeployments = _deployments.length;
 
         for (uint i = 0; i < totalDeployments; i++) {
-            Deployment storage deployment = deployments[i];
+            Deployment storage deployment = _deployments[i];
 
             if (deployment.synced) continue;
+
+            // allocate a deployed address into the shared memory
+            setAddress(deployment.name, deployment.addr);
+
+            deployment.synced = true;
+
+            if (deploymentsSyncDisabled()) continue;
 
             if (bytes(deployment.contractABI).length != 0) {
                 _syncVyperDeployments(deployment);
@@ -174,10 +198,14 @@ contract Deployer is VyperDeployer {
             } else {
                 revert InvalidDeployment();
             }
-
-            deployment.synced = true;
         }
     }
+
+    function _forgeOutDir() internal pure virtual returns (string memory) {}
+
+    function _deploymentsSubDir() internal pure virtual returns (string memory) {}
+
+    function _contractBaseDir() internal pure virtual returns (string memory) {}
 
     function _syncSolidityDeployments(Deployment storage deployment) private {
         uint256 cmdLen = 10;
@@ -226,8 +254,4 @@ contract Deployer is VyperDeployer {
         // run command
         vm.ffi(cmds);
     }
-
-    function _forgeOutDir() internal pure virtual returns (string memory) {}
-    function _deploymentsSubDir() internal pure virtual returns (string memory) {}
-    function _contractBaseDir() internal pure virtual returns (string memory) {}
 }

@@ -2,8 +2,6 @@
 pragma solidity 0.8.19;
 
 // 🧩 MODULES
-import {console} from "forge-std/console.sol";
-import {console2} from "forge-std/console2.sol";
 import {StdAssertions} from "forge-std/StdAssertions.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {stdError} from "forge-std/StdError.sol";
@@ -19,8 +17,7 @@ import {StdStyle} from "forge-std/StdStyle.sol";
 import {TestBase} from "forge-std/Base.sol";
 import {DSTest} from "ds-test/test.sol";
 
-import "./addresses/AddressesCollection.sol";
-import "./Chains.sol";
+import {AddressesCollection} from "./addresses/AddressesCollection.sol";
 
 contract IntegrationTest is
     DSTest,
@@ -29,6 +26,5 @@ contract IntegrationTest is
     StdInvariant,
     StdUtils,
     TestBase,
-    Chains,
     AddressesCollection
 {}

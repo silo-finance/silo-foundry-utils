@@ -1,37 +1,38 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
-import "forge-std/StdJson.sol";
+// solhint-disable no-console
+import {console} from "forge-std/console.sol";
+import {Test} from "forge-std/Test.sol";
+import {stdJson} from "forge-std/StdJson.sol";
 
-import "./mocks/ICounter.sol";
+import {ICounter} from "./mocks/ICounter.sol";
 
 abstract contract CommonDeploymentTest is Test {
-    string anvilPID;
+    string internal _anvilPID;
 
-    string constant CHAIN_ID = "9119";
-    string constant RPC_URL = "http://127.0.0.1:8546";
+    string constant internal _CHAIN_ID = "9119";
+    string constant internal _RPC_URL = "http://127.0.0.1:8546";
 
-    function test_deploy_contract() public {
+    function testDeployContract() public {
         _runAnvil();
         _runDeployments();
 
-        string memory path = string.concat("deployments", "/", CHAIN_ID, "/", getFileName(), ".json");
+        string memory path = string.concat("deployments", "/", _CHAIN_ID, "/", _getFileName(), ".json");
 
         string memory fileData = vm.readFile(path);
 
         bytes memory addr = stdJson.parseRaw(fileData, ".address");
         address counterAddr = abi.decode(addr, (address));
 
-        uint256 forkId = vm.createFork(RPC_URL, 1);
+        uint256 forkId = vm.createFork(_RPC_URL, 1);
         vm.selectFork(forkId);
 
         ICounter counter = ICounter(counterAddr);
 
         assertEq(
             counter.multiplier(),
-            getMultiplier(),
+            _getMultiplier(),
             "Failed to deploy contract with proper constructor arguments"
         );
 
@@ -49,11 +50,11 @@ abstract contract CommonDeploymentTest is Test {
         string[] memory cmds = new string[](7);
         cmds[0] = "forge";
         cmds[1] = "script";
-        cmds[2] = getDeploymentScript();
+        cmds[2] = _getDeploymentScript();
         cmds[3] = "--ffi";
         cmds[4] = "--broadcast";
         cmds[5] = "--rpc-url";
-        cmds[6] = RPC_URL;
+        cmds[6] = _RPC_URL;
 
         vm.ffi(cmds);
     }
@@ -64,29 +65,29 @@ abstract contract CommonDeploymentTest is Test {
 
         bytes memory output = vm.ffi(cmds);
 
-        anvilPID = string(output);
+        _anvilPID = string(output);
 
-        console.log("Started an Anvil with PID: >>>>>>>> ", anvilPID);
+        console.log("Started an Anvil with PID: >>>>>>>> ", _anvilPID);
     }
 
     function _killAnvil() internal {
-        if (bytes(anvilPID).length != 0) {
+        if (bytes(_anvilPID).length != 0) {
             string[] memory cmds = new string[](3);
             cmds[0] = "kill";
             cmds[1] = "-9";
-            cmds[2] = anvilPID;
+            cmds[2] = _anvilPID;
 
             vm.ffi(cmds);
 
-            anvilPID = "";
+            _anvilPID = "";
 
-            console.log("Killed an Anvil with PID: >>>>>>>> ", anvilPID);
+            console.log("Killed an Anvil with PID: >>>>>>>> ", _anvilPID);
         }
     }
 
-    function getFileName() internal pure virtual returns (string memory) {}
+    function _getFileName() internal pure virtual returns (string memory) {}
 
-    function getDeploymentScript() internal pure virtual returns (string memory) {}
+    function _getDeploymentScript() internal pure virtual returns (string memory) {}
 
-    function getMultiplier() internal pure virtual returns (uint256) {}
+    function _getMultiplier() internal pure virtual returns (uint256) {}
 }
