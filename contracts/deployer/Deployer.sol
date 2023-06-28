@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import {Chains} from "../networks/Chains.sol";
 import {VyperDeployer} from "./Vyper.sol";
+import {AddressesCollection} from "../networks/addresses/AddressesCollection.sol";
+import {IDeployerSharedMemory} from "./IDeployerSharedMemory.sol";
 
-contract Deployer is VyperDeployer, Chains {
+contract Deployer is VyperDeployer, AddressesCollection {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
@@ -21,9 +22,11 @@ contract Deployer is VyperDeployer, Chains {
     // Note: IS_SCRIPT() must return true.
     bool public constant IS_SCRIPT = true;
 
-    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
-    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
-    bool public deploymentsSyncDisabled;
+    bool public constant DEPLOYMENTS_SYNC_DISABLED_FLAG = true;
+    bool public constant DEPLOYMENTS_SYNC_ENABLED_FLAG = false;
+
+    address constant public DEPLOYER_SHARED_MEMORY =
+        address(uint160(uint256(keccak256("silo foundry utils: deployer"))));
 
     /// @dev The list of the deployments
     Deployment[] private _deployments;
@@ -35,13 +38,36 @@ contract Deployer is VyperDeployer, Chains {
     error InvalidDeployment();
 
     /// @notice Disables deployments synchronization
-    function disableDeploymentsSync() external {
-        deploymentsSyncDisabled = true;
+    function disableDeploymentsSync() public {
+        _mockDeploymentsSyncStatus(DEPLOYMENTS_SYNC_DISABLED_FLAG);
     }
 
     /// @notice Enables deployments synchronization
-    function enableDeploymentsSync() external {
-        deploymentsSyncDisabled = false;
+    function enableDeploymentsSync() public {
+        _mockDeploymentsSyncStatus(DEPLOYMENTS_SYNC_ENABLED_FLAG);
+    }
+
+    /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
+    /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
+    function deploymentsSyncDisabled() public view returns (bool result) {
+        (, bytes memory data) = DEPLOYER_SHARED_MEMORY.staticcall(
+            abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector)
+        );
+
+        if (data.length == 0) return DEPLOYMENTS_SYNC_ENABLED_FLAG;
+
+        assembly { // solhint-disable-line no-inline-assembly
+            result := mload(add(data, 0x20))
+        }
+    }
+
+    /// @dev Allocate in the `shared memory` a flag that marks wether the deployments synchronization in enabled or not
+    function _mockDeploymentsSyncStatus(bool _flag) internal {
+        vm.mockCall(
+            DEPLOYER_SHARED_MEMORY,
+            abi.encodeCall(IDeployerSharedMemory.deploymentsSyncDisabled, ()),
+            abi.encode(_flag)
+        );
     }
 
     /// @notice Deploy smart contract
@@ -151,14 +177,19 @@ contract Deployer is VyperDeployer, Chains {
 
     /// @notice Synchronize deployments by calling an external script
     function _syncDeployments() internal {
-        if (deploymentsSyncDisabled) return;
-
         uint256 totalDeployments = _deployments.length;
 
         for (uint i = 0; i < totalDeployments; i++) {
             Deployment storage deployment = _deployments[i];
 
             if (deployment.synced) continue;
+
+            // allocate a deployed address into the shared memory
+            setAddress(deployment.name, deployment.addr);
+
+            deployment.synced = true;
+
+            if (deploymentsSyncDisabled()) continue;
 
             if (bytes(deployment.contractABI).length != 0) {
                 _syncVyperDeployments(deployment);
@@ -167,8 +198,6 @@ contract Deployer is VyperDeployer, Chains {
             } else {
                 revert InvalidDeployment();
             }
-
-            deployment.synced = true;
         }
     }
 
