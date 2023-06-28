@@ -10,6 +10,16 @@ contract AddressesCollection is EthereumAddresses {
     }
 
     /// @notice Resolves an address by specified `_key` for the current chain id
+    /// @param _key The key to resolving an address (Smart contract name with an extension: Counter.vy)
+    function getDeployedAddress(string memory _key) public virtual returns (address shared) {
+        shared = getAddress(_key);
+
+        if (shared == address(0)) {
+            // TODO: read from deployments
+        }
+    }
+
+    /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _key The key to resolving an address
     function getAddress(string memory _key) public view returns (address) {
         uint256 chainId = getChainId();
