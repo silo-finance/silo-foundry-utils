@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 import {StdChains} from "forge-std/StdChains.sol";
 import {ScriptBase} from "forge-std/Base.sol";
