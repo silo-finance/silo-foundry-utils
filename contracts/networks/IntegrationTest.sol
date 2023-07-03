@@ -19,12 +19,4 @@ import {DSTest} from "ds-test/test.sol";
 
 import {AddressesCollection} from "./addresses/AddressesCollection.sol";
 
-contract IntegrationTest is
-    DSTest,
-    StdAssertions,
-    StdCheats,
-    StdInvariant,
-    StdUtils,
-    TestBase,
-    AddressesCollection
-{}
+contract IntegrationTest is DSTest, StdAssertions, StdCheats, StdInvariant, StdUtils, TestBase, AddressesCollection {}

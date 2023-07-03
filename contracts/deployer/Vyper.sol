@@ -38,7 +38,8 @@ contract VyperDeployer is ScriptBase {
         // add `_args` to the deployment bytecode
         _bytecode = abi.encodePacked(_bytecode, _args);
 
-        assembly { // solhint-disable-line no-inline-assembly
+        assembly {
+            // solhint-disable-line no-inline-assembly
             // deploy the bytecode with the `create` instruction
             deployedAddress := create(0, add(_bytecode, 0x20), mload(_bytecode))
         }

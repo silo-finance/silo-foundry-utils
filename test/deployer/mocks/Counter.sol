@@ -12,6 +12,7 @@ contract Counter {
     function setSomeNumber(uint256 _val) external {
         someNumber = _val;
     }
+
     function increment() external {
         someNumber = someNumber + 1;
     }
