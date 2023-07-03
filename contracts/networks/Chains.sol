@@ -32,18 +32,22 @@ abstract contract Chains is StdChains, ScriptBase {
     function isChain(string memory _chainAlias) public returns (bool) {
         return keccak256(bytes(getChain(getChainId()).chainAlias)) == keccak256(bytes(_chainAlias));
     }
-    
+
     /// @notice Resolves a chain identifier
     /// @return id The chain identifier
     function getChainId() public view returns (uint256 id) {
-        assembly { id := chainid() } // solhint-disable-line no-inline-assembly
+        assembly {
+            id := chainid()
+        } // solhint-disable-line no-inline-assembly
     }
 
     /// @notice Resolves a chain identifier
     /// @return chainIdAsString The chain identifier
     function getChainIdAsString() public view returns (string memory chainIdAsString) {
         uint256 currentChainID;
-        assembly { currentChainID := chainid() } // solhint-disable-line no-inline-assembly
+        assembly {
+            currentChainID := chainid()
+        } // solhint-disable-line no-inline-assembly
         chainIdAsString = vm.toString(currentChainID);
     }
 }

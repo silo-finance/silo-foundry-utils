@@ -25,7 +25,7 @@ contract Deployer is VyperDeployer, AddressesCollection {
     bool public constant DEPLOYMENTS_SYNC_DISABLED_FLAG = true;
     bool public constant DEPLOYMENTS_SYNC_ENABLED_FLAG = false;
 
-    address constant public DEPLOYER_SHARED_MEMORY =
+    address public constant DEPLOYER_SHARED_MEMORY =
         address(uint160(uint256(keccak256("silo foundry utils: deployer"))));
 
     /// @dev The list of the deployments
@@ -50,13 +50,13 @@ contract Deployer is VyperDeployer, AddressesCollection {
     /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
     /// For example, deployments synchronization should be disabled in tests but enabled in scripts.
     function deploymentsSyncDisabled() public view returns (bool result) {
-        (, bytes memory data) = DEPLOYER_SHARED_MEMORY.staticcall(
-            abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector)
-        );
+        (, bytes memory data) =
+            DEPLOYER_SHARED_MEMORY.staticcall(abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector));
 
         if (data.length == 0) return DEPLOYMENTS_SYNC_ENABLED_FLAG;
 
-        assembly { // solhint-disable-line no-inline-assembly
+        assembly {
+            // solhint-disable-line no-inline-assembly
             result := mload(add(data, 0x20))
         }
     }
@@ -64,28 +64,15 @@ contract Deployer is VyperDeployer, AddressesCollection {
     /// @dev Allocate in the `shared memory` a flag that marks wether the deployments synchronization in enabled or not
     function _mockDeploymentsSyncStatus(bool _flag) internal {
         vm.mockCall(
-            DEPLOYER_SHARED_MEMORY,
-            abi.encodeCall(IDeployerSharedMemory.deploymentsSyncDisabled, ()),
-            abi.encode(_flag)
+            DEPLOYER_SHARED_MEMORY, abi.encodeCall(IDeployerSharedMemory.deploymentsSyncDisabled, ()), abi.encode(_flag)
         );
     }
 
     /// @notice Deploy smart contract
     /// @param _fileName The smart contract file name with an extension: `Counter.vy`
     /// @return deployedAddress An address of the deployed smart contract
-    function _deploy(
-        string memory _fileName,
-        bytes memory _args
-    )
-        internal
-        returns (address deployedAddress)
-    {
-        deployedAddress =  _deploy(
-            _contractBaseDir(),
-            _deploymentsSubDir(),
-            _fileName,
-            _args
-        );
+    function _deploy(string memory _fileName, bytes memory _args) internal returns (address deployedAddress) {
+        deployedAddress = _deploy(_contractBaseDir(), _deploymentsSubDir(), _fileName, _args);
     }
 
     /// @notice Deploy smart contract
@@ -93,12 +80,7 @@ contract Deployer is VyperDeployer, AddressesCollection {
     /// @param _subDir The directory for the ABI allocation
     /// @param _fileName The smart contract file name with an extension: `Counter.vy`
     /// @return deployedAddress An address of the deployed smart contract
-    function _deploy(
-        string memory _folder,
-        string memory _subDir,
-        string memory _fileName,
-        bytes memory _args
-    )
+    function _deploy(string memory _folder, string memory _subDir, string memory _fileName, bytes memory _args)
         internal
         returns (address deployedAddress)
     {
@@ -108,45 +90,31 @@ contract Deployer is VyperDeployer, AddressesCollection {
         string memory deployedByteCode;
         string memory contractABI;
         string memory compilerVersion;
-        
-        (
-            deployedAddress,
-            bytecode,
-            deployedByteCode,
-            contractABI,
-            compilerVersion
-        ) = _deployContract(path, _args);
+
+        (deployedAddress, bytecode, deployedByteCode, contractABI, compilerVersion) = _deployContract(path, _args);
 
         string memory empty;
 
-        _deployments.push(Deployment({
-            name: _fileName,
-            deploymentsSubDir: _subDir,
-            addr: deployedAddress,
-            bytecode: bytecode,
-            deployedByteCode: deployedByteCode,
-            contractABI: contractABI,
-            compilerVersion: compilerVersion,
-            forgeOutDir: empty,
-            synced: false
-        }));
+        _deployments.push(
+            Deployment({
+                name: _fileName,
+                deploymentsSubDir: _subDir,
+                addr: deployedAddress,
+                bytecode: bytecode,
+                deployedByteCode: deployedByteCode,
+                contractABI: contractABI,
+                compilerVersion: compilerVersion,
+                forgeOutDir: empty,
+                synced: false
+            })
+        );
 
         return deployedAddress;
     }
 
     /// @notice Register deployed smart contract
-    function _registerDeployment(
-        address _deployedAddress,
-        string memory _fileName
-    )
-        internal
-    {
-        _registerDeployment(
-            _deployedAddress,
-            _deploymentsSubDir(),
-            _fileName,
-            _forgeOutDir()
-        );
+    function _registerDeployment(address _deployedAddress, string memory _fileName) internal {
+        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir());
     }
 
     /// @notice Register deployed smart contract
@@ -155,31 +123,31 @@ contract Deployer is VyperDeployer, AddressesCollection {
         string memory _subDir,
         string memory _fileName,
         string memory _outDir
-    )
-        internal
-    {
+    ) internal {
         if (bytes(_outDir).length == 0) revert ForgeOutDirIsRequired();
 
         string memory empty;
 
-        _deployments.push(Deployment({
-            name: _fileName,
-            deploymentsSubDir: _subDir,
-            addr: _deployedAddress,
-            bytecode: empty,
-            deployedByteCode: empty,
-            contractABI: empty,
-            compilerVersion: empty,
-            forgeOutDir: _outDir,
-            synced: false
-        }));
+        _deployments.push(
+            Deployment({
+                name: _fileName,
+                deploymentsSubDir: _subDir,
+                addr: _deployedAddress,
+                bytecode: empty,
+                deployedByteCode: empty,
+                contractABI: empty,
+                compilerVersion: empty,
+                forgeOutDir: _outDir,
+                synced: false
+            })
+        );
     }
 
     /// @notice Synchronize deployments by calling an external script
     function _syncDeployments() internal {
         uint256 totalDeployments = _deployments.length;
 
-        for (uint i = 0; i < totalDeployments; i++) {
+        for (uint256 i = 0; i < totalDeployments; i++) {
             Deployment storage deployment = _deployments[i];
 
             if (deployment.synced) continue;
@@ -217,13 +185,18 @@ contract Deployer is VyperDeployer, AddressesCollection {
         string[] memory cmds = new string[](cmdLen);
         cmds[0] = "./silo-foundry-utils";
         cmds[1] = "sync";
-        cmds[2] = "--network"; cmds[3] = getChainIdAsString();
-        cmds[4] = "--file"; cmds[5] = deployment.name;
-        cmds[6] = "--address"; cmds[7] = vm.toString(deployment.addr);
-        cmds[8] = "--out_dir"; cmds[9] = deployment.forgeOutDir;
+        cmds[2] = "--network";
+        cmds[3] = getChainIdAsString();
+        cmds[4] = "--file";
+        cmds[5] = deployment.name;
+        cmds[6] = "--address";
+        cmds[7] = vm.toString(deployment.addr);
+        cmds[8] = "--out_dir";
+        cmds[9] = deployment.forgeOutDir;
 
         if (bytes(deployment.deploymentsSubDir).length != 0) {
-            cmds[10] = "--deployments_sub_dir"; cmds[11] = deployment.deploymentsSubDir;
+            cmds[10] = "--deployments_sub_dir";
+            cmds[11] = deployment.deploymentsSubDir;
         }
 
         vm.ffi(cmds);
@@ -239,16 +212,24 @@ contract Deployer is VyperDeployer, AddressesCollection {
         string[] memory cmds = new string[](cmdLen);
         cmds[0] = "./silo-foundry-utils";
         cmds[1] = "sync";
-        cmds[2] = "--network"; cmds[3] = getChainIdAsString();
-        cmds[4] = "--file"; cmds[5] = deployment.name;
-        cmds[6] = "--address"; cmds[7] = vm.toString(deployment.addr);
-        cmds[8] = "--bytecode"; cmds[9] = deployment.bytecode;
-        cmds[10] = "--d_bytecode"; cmds[11] = deployment.deployedByteCode;
-        cmds[12] = "--abi"; cmds[13] = deployment.contractABI;
-        cmds[14] = "--compiler"; cmds[15] = deployment.compilerVersion;
+        cmds[2] = "--network";
+        cmds[3] = getChainIdAsString();
+        cmds[4] = "--file";
+        cmds[5] = deployment.name;
+        cmds[6] = "--address";
+        cmds[7] = vm.toString(deployment.addr);
+        cmds[8] = "--bytecode";
+        cmds[9] = deployment.bytecode;
+        cmds[10] = "--d_bytecode";
+        cmds[11] = deployment.deployedByteCode;
+        cmds[12] = "--abi";
+        cmds[13] = deployment.contractABI;
+        cmds[14] = "--compiler";
+        cmds[15] = deployment.compilerVersion;
 
         if (bytes(deployment.deploymentsSubDir).length != 0) {
-            cmds[16] = "--deployments_sub_dir"; cmds[17] = deployment.deploymentsSubDir;
+            cmds[16] = "--deployments_sub_dir";
+            cmds[17] = deployment.deploymentsSubDir;
         }
 
         // run command

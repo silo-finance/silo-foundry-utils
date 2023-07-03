@@ -11,8 +11,8 @@ import {ICounter} from "./mocks/ICounter.sol";
 abstract contract CommonDeploymentTest is Test {
     string internal _anvilPID;
 
-    string constant internal _CHAIN_ID = "9119";
-    string constant internal _RPC_URL = "http://127.0.0.1:8546";
+    string internal constant _CHAIN_ID = "9119";
+    string internal constant _RPC_URL = "http://127.0.0.1:8546";
 
     function testDeployContract() public {
         _runAnvil();
@@ -30,20 +30,12 @@ abstract contract CommonDeploymentTest is Test {
 
         ICounter counter = ICounter(counterAddr);
 
-        assertEq(
-            counter.multiplier(),
-            _getMultiplier(),
-            "Failed to deploy contract with proper constructor arguments"
-        );
+        assertEq(counter.multiplier(), _getMultiplier(), "Failed to deploy contract with proper constructor arguments");
 
         counter.increment();
         counter.increment();
 
-        assertEq(
-            counter.someNumber(),
-            2,
-            "Failed to increment"
-        );
+        assertEq(counter.someNumber(), 2, "Failed to increment");
     }
 
     function _runDeployments() internal {
