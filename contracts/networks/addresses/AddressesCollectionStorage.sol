@@ -28,5 +28,7 @@ abstract contract AddressesCollectionStorage is CommonBase, Chains {
         vm.mockCall(
             _ADDRESS_COLLECTION, abi.encodeCall(IAddressCollection.getAddress, (_chainId, _key)), abi.encode(_value)
         );
+
+        vm.label(_value, _key);
     }
 }
