@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 // 🧩 MODULES
 import {StdAssertions} from "forge-std/StdAssertions.sol";
@@ -19,12 +19,4 @@ import {DSTest} from "ds-test/test.sol";
 
 import {AddressesCollection} from "./addresses/AddressesCollection.sol";
 
-contract IntegrationTest is
-    DSTest,
-    StdAssertions,
-    StdCheats,
-    StdInvariant,
-    StdUtils,
-    TestBase,
-    AddressesCollection
-{}
+contract IntegrationTest is DSTest, StdAssertions, StdCheats, StdInvariant, StdUtils, TestBase, AddressesCollection {}

@@ -26,11 +26,8 @@ jobs:
         with:
           version: nightly
 
-      - name: yarn install
-        run: yarn install
-
-      - name: Solidity Lint
-        run: yarn lint:sol
+      - name: Forge fmt
+        run: forge fmt --check
 
       - name: Run Forge build
         run: |

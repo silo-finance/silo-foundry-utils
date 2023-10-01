@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 import {StdChains} from "forge-std/StdChains.sol";
 import {ScriptBase} from "forge-std/Base.sol";
@@ -27,23 +27,32 @@ abstract contract Chains is StdChains, ScriptBase {
         return getChain(_alias).rpcUrl;
     }
 
+    /// @notice Resolves a chain alias
+    function getChainAlias() public returns (string memory) {
+        return getChain(getChainId()).chainAlias;
+    }
+
     /// @notice Verifies if the current chain has the same alias as provided as an input parameter
     /// @param _chainAlias Chain alias to verify
     function isChain(string memory _chainAlias) public returns (bool) {
-        return keccak256(bytes(getChain(getChainId()).chainAlias)) == keccak256(bytes(_chainAlias));
+        return keccak256(bytes(getChainAlias())) == keccak256(bytes(_chainAlias));
     }
-    
+
     /// @notice Resolves a chain identifier
     /// @return id The chain identifier
     function getChainId() public view returns (uint256 id) {
-        assembly { id := chainid() } // solhint-disable-line no-inline-assembly
+        assembly {
+            id := chainid()
+        } // solhint-disable-line no-inline-assembly
     }
 
     /// @notice Resolves a chain identifier
     /// @return chainIdAsString The chain identifier
     function getChainIdAsString() public view returns (string memory chainIdAsString) {
         uint256 currentChainID;
-        assembly { currentChainID := chainid() } // solhint-disable-line no-inline-assembly
+        assembly {
+            currentChainID := chainid()
+        } // solhint-disable-line no-inline-assembly
         chainIdAsString = vm.toString(currentChainID);
     }
 }

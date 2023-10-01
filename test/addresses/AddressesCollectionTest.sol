@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 import {IntegrationTest} from "silo-foundry-utils/networks/IntegrationTest.sol";
 
@@ -16,7 +16,7 @@ contract AddressesCollectionTest is IntegrationTest {
 
     string internal _key1 = "_key1";
     string internal _key2 = "_key2";
-    
+
     function testSetGetAddress() public {
         _a.setAddress(_key1, _addr1);
         _b.setAddress(_key2, _addr2);

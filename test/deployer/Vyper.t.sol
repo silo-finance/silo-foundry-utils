@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 import {CommonDeploymentTest} from "./_common.sol";
 
@@ -21,20 +21,12 @@ contract DeployVyperTest is CommonDeploymentTest {
 
         ICounter counter = ICounter(counterAddr);
 
-        assertEq(
-            counter.someNumber(),
-            0,
-            "Invalid number"
-        );
+        assertEq(counter.someNumber(), 0, "Invalid number");
 
         counter.increment();
         counter.increment();
 
-        assertEq(
-            counter.someNumber(),
-            2,
-            "Failed to increment"
-        );
+        assertEq(counter.someNumber(), 2, "Failed to increment");
     }
 
     function _getFileName() internal pure override returns (string memory) {

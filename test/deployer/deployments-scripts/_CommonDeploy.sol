@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.6.2 <0.9.0;
 
 import {Deployer} from "silo-foundry-utils/deployer/Deployer.sol";
 
@@ -13,15 +13,15 @@ contract CommonDeploy is Deployer {
     string internal constant _COUNTER_SOL = "Counter.sol";
     string internal constant _COUNTER_VY = "Counter.vy";
 
-    function _forgeOutDir() internal pure override virtual returns (string memory) {
+    function _forgeOutDir() internal pure virtual override returns (string memory) {
         return _FORGE_OUT_DIR;
     }
 
-    function _deploymentsSubDir() internal pure override virtual returns (string memory) {
+    function _deploymentsSubDir() internal pure virtual override returns (string memory) {
         return _DEPLOYMENTS_SUB_DIR;
     }
 
-    function _contractBaseDir() internal pure override virtual returns (string memory) {
+    function _contractBaseDir() internal pure virtual override returns (string memory) {
         return _BASE_DIR;
     }
 }

@@ -1,10 +1,54 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity >=0.7.6 <0.9.0;
+pragma abicoder v2;
 
-import {ScriptBase} from "forge-std/Base.sol";
+import {Utils} from "../lib/Utils.sol";
+import {DeployerCommon} from "./DeployerCommon.sol";
 
-contract VyperDeployer is ScriptBase {
-    error FailedToDeploy(string _filePath, bytes _args);
+abstract contract VyperDeployer is DeployerCommon {
+    /// @notice Deploy smart contract
+    /// @param _fileName The smart contract file name with an extension: `Counter.vy`
+    /// @return deployedAddress An address of the deployed smart contract
+    function _deploy(string memory _fileName, bytes memory _args) internal returns (address deployedAddress) {
+        deployedAddress = _deploy(_contractBaseDir(), _deploymentsSubDir(), _fileName, _args);
+    }
+
+    /// @notice Deploy smart contract
+    /// @param _folder The smart contract allocation folder
+    /// @param _subDir The directory for the ABI allocation
+    /// @param _fileName The smart contract file name with an extension: `Counter.vy`
+    /// @return deployedAddress An address of the deployed smart contract
+    function _deploy(string memory _folder, string memory _subDir, string memory _fileName, bytes memory _args)
+        internal
+        returns (address deployedAddress)
+    {
+        string memory path = string(abi.encodePacked(_folder, "/", _fileName));
+
+        string memory bytecode;
+        string memory deployedByteCode;
+        string memory contractABI;
+        string memory compilerVersion;
+
+        (deployedAddress, bytecode, deployedByteCode, contractABI, compilerVersion) = _deployContract(path, _args);
+
+        string memory empty;
+
+        _deployments.push(
+            Deployment({
+                name: _fileName,
+                deploymentsSubDir: _subDir,
+                addr: deployedAddress,
+                bytecode: bytecode,
+                deployedByteCode: deployedByteCode,
+                contractABI: contractABI,
+                compilerVersion: compilerVersion,
+                forgeOutDir: empty,
+                synced: false
+            })
+        );
+
+        return deployedAddress;
+    }
 
     ///@notice Compiles a Vyper contract with constructor arguments
     /// and returns the address that the contract was deployeod to
@@ -38,15 +82,16 @@ contract VyperDeployer is ScriptBase {
         // add `_args` to the deployment bytecode
         _bytecode = abi.encodePacked(_bytecode, _args);
 
-        assembly { // solhint-disable-line no-inline-assembly
+        assembly {
+            // solhint-disable-line no-inline-assembly
             // deploy the bytecode with the `create` instruction
             deployedAddress := create(0, add(_bytecode, 0x20), mload(_bytecode))
         }
 
-        if (deployedAddress == address(0)) revert FailedToDeploy(_filePath, _args);
+        if (deployedAddress == address(0)) revert("FailedToDeploy");
 
         bytecode = vm.toString(_bytecode);
-        deployedByteCode = vm.toString(address(deployedAddress).code);
+        deployedByteCode = vm.toString(Utils.getCodeAt(address(deployedAddress)));
 
         // get smart contract ABI
         string[] memory getABICdms = new string[](4);
