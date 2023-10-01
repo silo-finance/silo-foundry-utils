@@ -27,10 +27,15 @@ abstract contract Chains is StdChains, ScriptBase {
         return getChain(_alias).rpcUrl;
     }
 
+    /// @notice Resolves a chain alias
+    function getChainAlias() public returns (string memory) {
+        return getChain(getChainId()).chainAlias;
+    }
+
     /// @notice Verifies if the current chain has the same alias as provided as an input parameter
     /// @param _chainAlias Chain alias to verify
     function isChain(string memory _chainAlias) public returns (bool) {
-        return keccak256(bytes(getChain(getChainId()).chainAlias)) == keccak256(bytes(_chainAlias));
+        return keccak256(bytes(getChainAlias())) == keccak256(bytes(_chainAlias));
     }
 
     /// @notice Resolves a chain identifier
