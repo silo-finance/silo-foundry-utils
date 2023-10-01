@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
 
-use clap::{Args};
+use clap::Args;
 
 enum Languages {
     Vyper,
@@ -219,5 +219,5 @@ impl Sync {
         }
 
         Ok(deployments_dir)
-    } 
+    }
 }
