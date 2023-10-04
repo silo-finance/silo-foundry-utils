@@ -8,14 +8,60 @@ import {Deployments} from "../lib/Deployments.sol";
 import {AddrLib} from "../lib/AddrLib.sol";
 
 library KeyValueStorage {
+    bytes32 internal constant _EMPTY_RESULT = keccak256(abi.encodePacked(""));
+    bytes32 internal constant _RESULT_TRUE = keccak256(abi.encodePacked("true"));
+
     function setAddress(string memory _file, string memory _key1, string memory _key2, address _value) internal {
         AddrLib.setAddress(_key2, _value);
 
         set(_file, _key1, _key2, VmLib.vm().toString(_value));
     }
 
-    function getAddress(string memory _file, string memory _key1, string memory _key2) internal returns (address) {
-        return Utils.asciiBytesToAddress(get(_file, _key1, _key2));
+    function getAddress(string memory _file, string memory _key1, string memory _key2)
+        internal
+        returns (address result)
+    {
+        bytes memory data = get(_file, _key1, _key2);
+        if (keccak256(data) == _EMPTY_RESULT) {
+            return address(0);
+        }
+
+        result = Utils.asciiBytesToAddress(data);
+
+        if (result != address(0)) {
+            VmLib.vm().label(result, _key2);
+        }
+    }
+
+    function getString(string memory _file, string memory _key1, string memory _key2)
+        internal
+        returns (string memory)
+    {
+        bytes memory data = get(_file, _key1, _key2);
+        if (keccak256(data) == _EMPTY_RESULT) {
+            return "";
+        }
+
+        return string(removeBr(data));
+    }
+
+    function getBoolean(string memory _file, string memory _key1, string memory _key2) internal returns (bool) {
+        bytes memory data = get(_file, _key1, _key2);
+
+        if (keccak256(data) == _RESULT_TRUE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function getUint(string memory _file, string memory _key1, string memory _key2) internal returns (uint256) {
+        bytes memory data = get(_file, _key1, _key2);
+        if (keccak256(data) == _EMPTY_RESULT) {
+            return 0;
+        }
+
+        return Utils.stringToUint(string(get(_file, _key1, _key2)));
     }
 
     function get(string memory _file, string memory _key1, string memory _key2)
@@ -62,5 +108,21 @@ library KeyValueStorage {
         }
 
         VmLib.vm().ffi(cmds);
+    }
+
+    function removeBr(bytes memory _data) internal pure returns (bytes memory) {
+        if (_data.length < 3) return _data;
+
+        uint256 length = _data.length - 2;
+        uint256 j = 0;
+
+        bytes memory result = new bytes(length);
+
+        for (uint256 i = 1; i <= length; i++) {
+            result[j] = _data[i];
+            j++;
+        }
+
+        return result;
     }
 }
