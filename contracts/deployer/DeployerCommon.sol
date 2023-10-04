@@ -5,6 +5,7 @@ import {AddressesCollection} from "../networks/addresses/AddressesCollection.sol
 import {IDeployerSharedMemory} from "./IDeployerSharedMemory.sol";
 import {Utils} from "../lib/Utils.sol";
 import {Deployments} from "../lib/Deployments.sol";
+import {VmLib} from "../lib/VmLib.sol";
 
 abstract contract DeployerCommon is AddressesCollection {
     /// @dev The struct that describes the deployment
@@ -52,6 +53,10 @@ abstract contract DeployerCommon is AddressesCollection {
             string memory chainAlias = getChainAlias();
 
             shared = Deployments.getAddress(deploymentsDir, chainAlias, _key);
+        }
+
+        if (shared != address(0)) {
+            VmLib.vm().label(shared, _key);
         }
     }
 
