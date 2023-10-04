@@ -19,6 +19,18 @@ library Utils {
         }
     }
 
+    // https://ethereum.stackexchange.com/questions/10932/how-to-convert-string-to-int
+    function stringToUint(string memory s) external pure returns (uint256) {
+        bytes memory b = bytes(s);
+        uint256 result = 0;
+        for (uint256 i = 0; i < b.length; i++) {
+            if (uint8(b[i]) >= 48 && uint8(b[i]) <= 57) {
+                result = result * 10 + (uint256(uint8(b[i])) - 48);
+            }
+        }
+        return result;
+    }
+
     function encodeGetAddressCall(bytes4 _fnSig, uint256 _chainId, string memory _key)
         internal
         pure

@@ -5,10 +5,6 @@ contract AddressesCollectionImpl {
     // network => key => value
     mapping(uint256 => mapping(string => address)) public getAddress;
 
-    constructor(uint256 _chainId, string memory _key, address _value) {
-        getAddress[_chainId][_key] = _value;
-    }
-
     /// @notice Allocates an address for the current chain id
     /// @param _key The key to allocating/resolving an address
     /// @param _value An address that should be allocated
