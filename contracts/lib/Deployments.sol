@@ -4,6 +4,7 @@ pragma solidity >=0.7.6 <0.9.0;
 import {IDeployerSharedMemory} from "../deployer/IDeployerSharedMemory.sol";
 import {KeyValueStorage} from "../key-value/KeyValueStorage.sol";
 import {VmLib} from "./VmLib.sol";
+import {AddrLib} from "./AddrLib.sol";
 
 library Deployments {
     bool public constant DEPLOYMENTS_SYNC_DISABLED_FLAG = true;
@@ -47,8 +48,14 @@ library Deployments {
 
     function getAddress(string memory _deploymentsFolder, string memory _networkAlias, string memory _smartContractName)
         internal
-        returns (address)
+        returns (address result)
     {
+        result = AddrLib.getAddress(_networkAlias, _smartContractName);
+
+        if (result != address(0)) {
+            return result;
+        }
+
         string memory filePath = string(
             abi.encodePacked(_deploymentsFolder, "/deployments/", _networkAlias, "/", _smartContractName, ".json")
         );
