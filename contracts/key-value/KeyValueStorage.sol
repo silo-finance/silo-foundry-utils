@@ -24,7 +24,7 @@ library KeyValueStorage {
         internal
         returns (address result)
     {
-        if (_key2 == _PLACEHOLDER_KEY) {
+        if (keccak256(abi.encodePacked(_key2)) == _PLACEHOLDER_KEY) {
             return address(0);
         }
 
