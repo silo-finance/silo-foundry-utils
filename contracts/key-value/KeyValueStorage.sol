@@ -2,6 +2,8 @@
 pragma solidity >=0.7.6 <0.9.0;
 pragma abicoder v2;
 
+import {console2} from "forge-std/console2.sol";
+
 import {VmLib} from "../lib/VmLib.sol";
 import {Utils} from "../lib/Utils.sol";
 import {Deployments} from "../lib/Deployments.sol";
@@ -21,12 +23,20 @@ library KeyValueStorage {
         internal
         returns (address result)
     {
+        console2.log("KeyValueStorage.getAddress starting");
+
         bytes memory data = get(_file, _key1, _key2);
+
+        console2.log("data.length %s", data.length);
+        console2.log("data is empty %s", keccak256(data) == _EMPTY_RESULT);
+
         if (keccak256(data) == _EMPTY_RESULT) {
             return address(0);
         }
 
         result = Utils.asciiBytesToAddress(data);
+
+        console2.log("KeyValueStorage.getAddress result: %s", result);
 
         if (result != address(0)) {
             VmLib.vm().label(result, _key2);
