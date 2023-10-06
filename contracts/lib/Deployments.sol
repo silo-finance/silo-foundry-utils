@@ -52,11 +52,11 @@ library Deployments {
         internal
         returns (address result)
     {
-        console.log("reading form AddrLib");
+        console2.log("reading form AddrLib");
 
         result = AddrLib.getAddress(_networkAlias, _smartContractName);
 
-        console.log("AddrLib.getAddress: %s", result);
+        console2.log("AddrLib.getAddress: %s", result);
 
         if (result != address(0)) {
             return result;
@@ -66,10 +66,10 @@ library Deployments {
             abi.encodePacked(_deploymentsFolder, "/deployments/", _networkAlias, "/", _smartContractName, ".json")
         );
 
-        console.log("KeyValueStorage.getAddress filePath: %s", filePath);
+        console2.log("KeyValueStorage.getAddress filePath: %s", filePath);
 
         result = KeyValueStorage.getAddress(filePath, "", "address");
 
-        console.log("KeyValueStorage.getAddress result: %s", result);
+        console2.log("KeyValueStorage.getAddress result: %s", result);
     }
 }
