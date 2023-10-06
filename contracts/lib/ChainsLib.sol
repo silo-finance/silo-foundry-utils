@@ -39,7 +39,7 @@ library ChainsLib {
     function chainAlias() internal view returns (string memory) {
         uint256 chainId = getChainId();
 
-        return chainAlias(chainId); 
+        return chainAlias(chainId);
     }
 
     function chainAlias(uint256 _chainId) internal pure returns (string memory) {

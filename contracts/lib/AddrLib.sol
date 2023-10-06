@@ -68,9 +68,7 @@ library AddrLib {
 
         if (result == address(0)) {
             result = KeyValueStorage.getAddress(
-                string(abi.encodePacked(_DEFAULE_ADDR_PATH, "/", _chainAlias, ".json")),
-                "",
-                _key
+                string(abi.encodePacked(_DEFAULE_ADDR_PATH, "/", _chainAlias, ".json")), "", _key
             );
         }
     }
