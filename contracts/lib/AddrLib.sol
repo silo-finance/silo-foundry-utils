@@ -9,8 +9,6 @@ import {Utils} from "./Utils.sol";
 import {VmLib} from "./VmLib.sol";
 import {ChainsLib} from "./ChainsLib.sol";
 
-import {console} from "forge-std/console.sol";
-
 library AddrLib {
     address internal constant _ADDRESS_COLLECTION =
         address(uint160(uint256(keccak256("silo foundry utils: address collection"))));
