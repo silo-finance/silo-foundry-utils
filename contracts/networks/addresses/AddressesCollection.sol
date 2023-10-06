@@ -21,7 +21,7 @@ contract AddressesCollection is EthereumAddresses {
 
         string memory chainAlias = getChainAlias();
 
-        console2.log("AddressesCollection.getAddress getChainAlias: %s", getChainAlias);
+        console2.log("AddressesCollection.getAddress getChainAlias: %s", chainAlias);
 
         result = AddrLib.getAddress(chainAlias, _key);
 
