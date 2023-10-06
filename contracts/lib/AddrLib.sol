@@ -7,6 +7,7 @@ import {AddressesCollectionImplWrapper} from "../networks/addresses/AddressesCol
 import {KeyValueStorage} from "../key-value/KeyValueStorage.sol";
 import {Utils} from "./Utils.sol";
 import {VmLib} from "./VmLib.sol";
+import {ChainsLib} from "./ChainsLib.sol";
 
 library AddrLib {
     address internal constant _ADDRESS_COLLECTION =
@@ -18,7 +19,7 @@ library AddrLib {
     /// @param _key The key to allocating/resolving an address
     /// @param _value An address that should be allocated
     function setAddress(string memory _key, address _value) internal {
-        setAddress(getChainId(), _key, _value);
+        setAddress(ChainsLib.getChainId(), _key, _value);
     }
 
     /// @notice Allocates an address
@@ -36,10 +37,19 @@ library AddrLib {
     }
 
     /// @notice Resolves an address by specified `_key` for the current chain id
+    /// @param _key The key to resolving an address
+    function getAddress(string memory _key) public returns (address resut) {
+        uint256 chainId = ChainsLib.getChainId();
+        string memory chainAlias = ChainsLib.chainAlias();
+
+        resut = getAddress(chainAlias, chainId, _key);
+    }
+
+    /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _chainAlias Chain alias
     /// @param _key The key to resolving an address
     function getAddress(string memory _chainAlias, string memory _key) public returns (address resut) {
-        uint256 chainId = getChainId();
+        uint256 chainId = ChainsLib.getChainId();
 
         resut = getAddress(_chainAlias, chainId, _key);
     }
@@ -62,7 +72,7 @@ library AddrLib {
     }
 
     function getAddressSafe(string memory _chainAlias, string memory _key) public returns (address result) {
-        uint256 chainId = getChainId();
+        uint256 chainId = ChainsLib.getChainId();
         result = getAddress(_chainAlias, chainId, _key);
         requireNotEmptyAddress(result, _chainAlias, _key);
     }
@@ -75,25 +85,7 @@ library AddrLib {
         requireNotEmptyAddress(result, _chainAlias, _key);
     }
 
-    /// @notice Resolves a chain identifier
-    /// @return id The chain identifier
-    function getChainId() internal view returns (uint256 id) {
-        assembly {
-            id := chainid()
-        } // solhint-disable-line no-inline-assembly
-    }
-
     function init() internal {
-        uint256 codeSize;
-        address addrCollection = _ADDRESS_COLLECTION;
-
-        assembly {
-            // retrieve the size of the code
-            codeSize := extcodesize(addrCollection)
-        }
-
-        if (codeSize != 0) return;
-
         AddressesCollectionImpl collection = new AddressesCollectionImpl();
         AddressesCollectionImplWrapper wrapper = new AddressesCollectionImplWrapper();
 
