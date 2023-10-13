@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.2 <0.9.0;
 
-import {console2} from "forge-std/console2.sol";
-
 import {EthereumAddresses} from "./EthereumAddresses.sol";
 import {IAddressCollection} from "./IAddressCollection.sol";
 import {AddrLib} from "../../lib/AddrLib.sol";
@@ -17,15 +15,8 @@ contract AddressesCollection is EthereumAddresses {
     /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _key The key to resolving an address
     function getAddress(string memory _key) public returns (address result) {
-        console2.log("AddressesCollection.getAddress starting");
-
         string memory chainAlias = getChainAlias();
-
-        console2.log("AddressesCollection.getAddress getChainAlias: %s", chainAlias);
-
         result = AddrLib.getAddress(chainAlias, _key);
-
-        console2.log("AddressesCollection.getAddress complete");
     }
 
     /// @notice Resolves an address by specified `_key` and `_chainId`

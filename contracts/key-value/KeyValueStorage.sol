@@ -2,8 +2,6 @@
 pragma solidity >=0.7.6 <0.9.0;
 pragma abicoder v2;
 
-import {console2} from "forge-std/console2.sol";
-
 import {VmLib} from "../lib/VmLib.sol";
 import {Utils} from "../lib/Utils.sol";
 import {Deployments} from "../lib/Deployments.sol";
@@ -28,20 +26,13 @@ library KeyValueStorage {
             return address(0);
         }
 
-        console2.log("KeyValueStorage.getAddress starting");
-
         bytes memory data = get(_file, _key1, _key2);
-
-        console2.log("data.length %s", data.length);
-        console2.log("data is empty %s", keccak256(data) == _EMPTY_RESULT);
 
         if (keccak256(data) == _EMPTY_RESULT) {
             return address(0);
         }
 
         result = Utils.asciiBytesToAddress(data);
-
-        console2.log("KeyValueStorage.getAddress result: %s", result);
 
         if (result != address(0)) {
             VmLib.vm().label(result, _key2);
@@ -83,10 +74,6 @@ library KeyValueStorage {
         internal
         returns (bytes memory result)
     {
-        console2.log("KeyValueStorage.get _file: %s", _file);
-        console2.log("KeyValueStorage.get _key1: %s", _key1);
-        console2.log("KeyValueStorage.get _key2: %s", _key2);
-
         uint256 cmdLen = bytes(_key1).length != 0 ? 8 : 6;
 
         string[] memory cmds = new string[](cmdLen);
@@ -103,11 +90,7 @@ library KeyValueStorage {
             cmds[7] = _key1;
         }
 
-        console2.log("KeyValueStorage.get ffi");
-
         result = VmLib.vm().ffi(cmds);
-
-        console2.log("KeyValueStorage.get complete");
     }
 
     function set(string memory _file, string memory _key1, string memory _key2, string memory _value) internal {
