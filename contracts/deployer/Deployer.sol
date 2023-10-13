@@ -43,7 +43,7 @@ contract Deployer is VyperDeployer {
         cmds[0] = "./silo-foundry-utils";
         cmds[1] = "sync";
         cmds[2] = "--network";
-        cmds[3] = getChainIdAsString();
+        cmds[3] = getChainAlias();
         cmds[4] = "--file";
         cmds[5] = deployment.name;
         cmds[6] = "--address";
