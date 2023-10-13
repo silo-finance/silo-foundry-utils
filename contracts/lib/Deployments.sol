@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.6 <0.9.0;
 
-import {console2} from "forge-std/console2.sol";
-
 import {IDeployerSharedMemory} from "../deployer/IDeployerSharedMemory.sol";
 import {KeyValueStorage} from "../key-value/KeyValueStorage.sol";
 import {VmLib} from "./VmLib.sol";
@@ -52,11 +50,7 @@ library Deployments {
         internal
         returns (address result)
     {
-        console2.log("reading form AddrLib");
-
         result = AddrLib.getAddress(_networkAlias, _smartContractName);
-
-        console2.log("AddrLib.getAddress: %s", result);
 
         if (result != address(0)) {
             return result;
@@ -66,10 +60,6 @@ library Deployments {
             abi.encodePacked(_deploymentsFolder, "/deployments/", _networkAlias, "/", _smartContractName, ".json")
         );
 
-        console2.log("KeyValueStorage.getAddress filePath: %s", filePath);
-
         result = KeyValueStorage.getAddress(filePath, "", "address");
-
-        console2.log("KeyValueStorage.getAddress result: %s", result);
     }
 }

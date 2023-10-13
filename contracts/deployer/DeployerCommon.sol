@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.2 <0.9.0;
 
-import {console2} from "forge-std/console2.sol";
-
 import {AddressesCollection} from "../networks/addresses/AddressesCollection.sol";
 import {IDeployerSharedMemory} from "./IDeployerSharedMemory.sol";
 import {Utils} from "../lib/Utils.sol";
@@ -48,11 +46,7 @@ abstract contract DeployerCommon is AddressesCollection {
     /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _key The key to resolving an address (Smart contract name with an extension: Counter.vy)
     function getDeployedAddress(string memory _key) public virtual returns (address shared) {
-        console2.log("DeployerCommon.getDeployedAddress starting");
-
         shared = getAddress(_key);
-
-        console2.log("DeployerCommon.getDeployedAddress shared: %s", shared);
 
         if (shared == address(0)) {
             string memory deploymentsDir = _deploymentsSubDir();
@@ -61,13 +55,9 @@ abstract contract DeployerCommon is AddressesCollection {
             shared = Deployments.getAddress(deploymentsDir, chainAlias, _key);
         }
 
-        console2.log("DeployerCommon.getDeployedAddress shared: %s", shared);
-
         if (shared != address(0)) {
             VmLib.vm().label(shared, _key);
         }
-
-        console2.log("DeployerCommon.getDeployedAddress complete");
     }
 
     /// @notice Register deployed smart contract

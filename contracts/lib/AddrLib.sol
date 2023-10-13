@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.6 <0.9.0;
 
-import {console2} from "forge-std/console2.sol";
-
 import {IAddressCollection} from "../networks/addresses/IAddressCollection.sol";
 import {AddressesCollectionImpl} from "../networks/addresses/AddressesCollectionImpl.sol";
 import {AddressesCollectionImplWrapper} from "../networks/addresses/AddressesCollectionImplWrapper.sol";
@@ -29,10 +27,6 @@ library AddrLib {
     /// @param _key The key to allocating/resolving an address
     /// @param _value An address that should be allocated
     function setAddress(uint256 _chainId, string memory _key, address _value) internal {
-        console2.log("AddrLib.setAddress _chainId: %", _chainId);
-        console2.log("AddrLib.setAddress _key: %", _key);
-        console2.log("AddrLib.setAddress _value: %", _value);
-
         VmLib.vm().mockCall(
             _ADDRESS_COLLECTION,
             Utils.encodeGetAddressCall(IAddressCollection.getAddress.selector, _chainId, _key),
@@ -40,8 +34,6 @@ library AddrLib {
         );
 
         VmLib.vm().label(_value, _key);
-
-        console2.log("AddrLib.setAddress complete");
     }
 
     /// @notice Resolves an address by specified `_key` for the current chain id
