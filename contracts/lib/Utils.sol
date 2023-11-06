@@ -3,7 +3,7 @@ pragma solidity >=0.6.2 <0.9.0;
 
 library Utils {
     // https://docs.soliditylang.org/en/latest/assembly.html#example
-    function getCodeAt(address _addr) public view returns (bytes memory oCode) {
+    function getCodeAt(address _addr) internal view returns (bytes memory oCode) {
         assembly {
             // retrieve the size of the code, this needs assembly
             let size := extcodesize(_addr)
@@ -20,7 +20,7 @@ library Utils {
     }
 
     // https://ethereum.stackexchange.com/questions/10932/how-to-convert-string-to-int
-    function stringToUint(string memory s) external pure returns (uint256) {
+    function stringToUint(string memory s) internal pure returns (uint256) {
         bytes memory b = bytes(s);
         uint256 result = 0;
         for (uint256 i = 0; i < b.length; i++) {
