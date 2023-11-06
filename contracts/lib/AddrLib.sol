@@ -38,7 +38,7 @@ library AddrLib {
 
     /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _key The key to resolving an address
-    function getAddress(string memory _key) public returns (address resut) {
+    function getAddress(string memory _key) internal returns (address resut) {
         uint256 chainId = ChainsLib.getChainId();
         string memory chainAlias = ChainsLib.chainAlias();
 
@@ -48,7 +48,7 @@ library AddrLib {
     /// @notice Resolves an address by specified `_key` for the current chain id
     /// @param _chainAlias Chain alias
     /// @param _key The key to resolving an address
-    function getAddress(string memory _chainAlias, string memory _key) public returns (address resut) {
+    function getAddress(string memory _chainAlias, string memory _key) internal returns (address resut) {
         uint256 chainId = ChainsLib.getChainId();
 
         resut = getAddress(_chainAlias, chainId, _key);
@@ -59,7 +59,7 @@ library AddrLib {
     /// @param _chainId A chain identifier for which we want to resolve an address
     /// @param _key The key to resolving an address
     function getAddress(string memory _chainAlias, uint256 _chainId, string memory _key)
-        public
+        internal
         returns (address result)
     {
         result = IAddressCollection(_ADDRESS_COLLECTION).getAddress(_chainId, _key);
@@ -71,7 +71,7 @@ library AddrLib {
         }
     }
 
-    function getAddressSafe(string memory _chainAlias, string memory _key) public returns (address result) {
+    function getAddressSafe(string memory _chainAlias, string memory _key) internal returns (address result) {
         uint256 chainId = ChainsLib.getChainId();
         result = getAddress(_chainAlias, chainId, _key);
         requireNotEmptyAddress(result, _chainAlias, _key);
