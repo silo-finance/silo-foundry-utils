@@ -23,18 +23,18 @@ abstract contract Chains is StdChains, ScriptBase {
     string public constant GNOSIS_CHAIN_ALIAS = "gnosis_chain";
 
     /// @notice Resolves a chain RPC URL
-    function getChainRpcUrl(string memory _alias) public returns (string memory) {
+    function getChainRpcUrl(string memory _alias) public virtual returns (string memory) {
         return getChain(_alias).rpcUrl;
     }
 
     /// @notice Resolves a chain alias
-    function getChainAlias() public returns (string memory) {
+    function getChainAlias() public virtual returns (string memory) {
         return getChain(getChainId()).chainAlias;
     }
 
     /// @notice Verifies if the current chain has the same alias as provided as an input parameter
     /// @param _chainAlias Chain alias to verify
-    function isChain(string memory _chainAlias) public returns (bool) {
+    function isChain(string memory _chainAlias) public virtual returns (bool) {
         return keccak256(bytes(getChainAlias())) == keccak256(bytes(_chainAlias));
     }
 
