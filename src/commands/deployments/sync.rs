@@ -175,7 +175,7 @@ impl Sync {
         let out_dir = self.out_dir.clone().unwrap();
         let file_dir_name = self.file.clone();
         let file_dir_name_parts: Vec<&str> = file_dir_name.split(".").collect();
-        let mut file_name: String = file_dir_name_parts[0].clone().to_string();
+        let mut file_name: String = file_dir_name_parts[0].to_string();
         file_name.push_str(&".json".to_string());
 
         let json_path = env::current_dir()
