@@ -11,6 +11,7 @@ library KeyValueStorage {
     bytes32 internal constant _EMPTY_RESULT = keccak256(abi.encodePacked(""));
     bytes32 internal constant _RESULT_TRUE = keccak256(abi.encodePacked("true"));
     bytes32 internal constant _PLACEHOLDER_KEY = keccak256(abi.encodePacked("PLACEHOLDER"));
+    bytes32 internal constant _ADDRESS = keccak256(abi.encodePacked("address"));
 
     function setAddress(string memory _file, string memory _key1, string memory _key2, address _value) internal {
         AddrLib.setAddress(_key2, _value);
@@ -34,7 +35,7 @@ library KeyValueStorage {
 
         result = Utils.asciiBytesToAddress(data);
 
-        if (result != address(0)) {
+        if (result != address(0) && keccak256(abi.encodePacked(_key2)) != _ADDRESS) {
             VmLib.vm().label(result, _key2);
         }
     }

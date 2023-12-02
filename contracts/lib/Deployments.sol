@@ -61,5 +61,9 @@ library Deployments {
         );
 
         result = KeyValueStorage.getAddress(filePath, "", "address");
+
+        if (result != address(0)) {
+            VmLib.vm().label(result, _smartContractName);
+        }
     }
 }
