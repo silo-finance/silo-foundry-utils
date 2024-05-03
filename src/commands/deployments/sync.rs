@@ -61,7 +61,6 @@ pub struct OutFileData {
     pub methodIdentifiers: Value,
     pub rawMetadata: String,
     pub metadata: OutFileMetadata,
-    pub ast: Value,
     pub id: u64,
 }
 
