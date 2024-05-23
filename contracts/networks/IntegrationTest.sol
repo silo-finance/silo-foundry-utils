@@ -15,8 +15,7 @@ import {StdStyle} from "forge-std/StdStyle.sol";
 
 // 📦 BOILERPLATE
 import {TestBase} from "forge-std/Base.sol";
-import {DSTest} from "ds-test/test.sol";
 
 import {AddressesCollection} from "./addresses/AddressesCollection.sol";
 
-contract IntegrationTest is DSTest, StdAssertions, StdCheats, StdInvariant, StdUtils, TestBase, AddressesCollection {}
+contract IntegrationTest is TestBase, StdAssertions, StdCheats, StdInvariant, StdUtils, AddressesCollection {}
