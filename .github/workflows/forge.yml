@@ -8,6 +8,7 @@ on:
 
 env:
   FOUNDRY_PROFILE: ci
+  FOUNDRY_EVM_VERSION: paris
 
 jobs:
   forge-tests:
