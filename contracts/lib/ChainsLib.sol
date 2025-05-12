@@ -19,6 +19,7 @@ library ChainsLib {
     uint256 public constant BNB_SMART_CHAIN_TESTNET_CHAIN_ID = 97;
     uint256 public constant GNOSIS_CHAIN_ID = 100;
     uint256 public constant SONIC_CHAIN_ID = 146;
+    uint256 public constant INK_CHAIN_ID = 57073;
 
     string public constant ANVIL_ALIAS = "anvil";
     string public constant MAINNET_ALIAS = "mainnet";
@@ -37,6 +38,7 @@ library ChainsLib {
     string public constant BNB_SMART_CHAIN_TESTNET_ALIAS = "bnb_smart_chain_testnet";
     string public constant GNOSIS_CHAIN_ALIAS = "gnosis_chain";
     string public constant SONIC_ALIAS = "sonic";
+    string public constant INK_ALIAS = "ink";
 
     function chainAlias() internal view returns (string memory) {
         uint256 chainId = getChainId();
@@ -81,6 +83,8 @@ library ChainsLib {
             result = GNOSIS_CHAIN_ALIAS;
         } else if (_chainId == SONIC_CHAIN_ID) {
             result = SONIC_ALIAS;
+        } else if (_chainId == INK_CHAIN_ID) {
+            result = INK_ALIAS;
         }
 
         return result;
