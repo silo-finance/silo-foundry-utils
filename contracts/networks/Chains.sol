@@ -4,6 +4,8 @@ pragma solidity >=0.6.2 <0.9.0;
 import {StdChains} from "forge-std/StdChains.sol";
 import {ScriptBase} from "forge-std/Base.sol";
 
+import {ChainsLib} from "../lib/ChainsLib.sol";
+
 abstract contract Chains is StdChains, ScriptBase {
     string public constant ANVIL_ALIAS = "anvil";
     string public constant MAINNET_ALIAS = "mainnet";
@@ -29,7 +31,7 @@ abstract contract Chains is StdChains, ScriptBase {
 
     /// @notice Resolves a chain alias
     function getChainAlias() public virtual returns (string memory) {
-        return getChain(getChainId()).chainAlias;
+        return ChainsLib.chainAlias();
     }
 
     /// @notice Verifies if the current chain has the same alias as provided as an input parameter
