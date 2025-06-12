@@ -3,6 +3,7 @@ pragma solidity >=0.7.6 <0.9.0;
 pragma abicoder v2;
 
 import {VyperDeployer} from "./Vyper.sol";
+import {ChainsLib} from "../lib/ChainsLib.sol";
 
 contract Deployer is VyperDeployer {
     function _syncSolidityDeployments(Deployment storage deployment) internal override {
@@ -16,7 +17,7 @@ contract Deployer is VyperDeployer {
         cmds[0] = "./silo-foundry-utils";
         cmds[1] = "sync";
         cmds[2] = "--network";
-        cmds[3] = getChainAlias();
+        cmds[3] = ChainsLib.chainAlias();
         cmds[4] = "--file";
         cmds[5] = deployment.name;
         cmds[6] = "--address";
@@ -43,7 +44,7 @@ contract Deployer is VyperDeployer {
         cmds[0] = "./silo-foundry-utils";
         cmds[1] = "sync";
         cmds[2] = "--network";
-        cmds[3] = getChainAlias();
+        cmds[3] = ChainsLib.chainAlias();
         cmds[4] = "--file";
         cmds[5] = deployment.name;
         cmds[6] = "--address";
