@@ -3,7 +3,6 @@
 someNumber: public(uint256)
 multiplier: public(uint256)
 
-@external
 @deploy
 def __init__(_mult: uint256):
     self.multiplier = _mult
