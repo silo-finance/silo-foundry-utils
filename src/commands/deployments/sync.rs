@@ -30,6 +30,16 @@ pub struct DeploymentJSON {
     pub deployedBytecode: String,
     pub language: String,
     pub compiler: String,
+    #[serde(skip_serializing_if = "is_zero_or_none")]
+    pub deployedAtBlock: Option<u64>,
+}
+
+fn is_zero_or_none(value: &Option<u64>) -> bool {
+    match value {
+        None => true,
+        Some(0) => true,
+        Some(_) => false,
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default)]
@@ -92,7 +102,10 @@ pub struct Sync {
     pub abi: Option<String>,
     /// Compiler version
     #[arg(long = "compiler")]
-    pub compiler_version: Option<String>
+    pub compiler_version: Option<String>,
+    /// Deployed at block
+    #[arg(long = "deployed_at_block")]
+    pub deployed_at_block: Option<u64>
 }
 /**
  Example vyper:
@@ -166,7 +179,8 @@ impl Sync {
             bytecode: self.bytecode.clone().unwrap(),
             deployedBytecode: self.deployed_bytecode.clone().unwrap(),
             language: Languages::Vyper.as_str(),
-            compiler: self.compiler_version.clone().unwrap()
+            compiler: self.compiler_version.clone().unwrap(),
+            deployedAtBlock: self.deployed_at_block
         })
     }
 
@@ -192,7 +206,8 @@ impl Sync {
             bytecode: out_file.bytecode.object,
             deployedBytecode: out_file.deployedBytecode.object,
             language: Languages::Solidity.as_str(),
-            compiler: out_file.metadata.compiler.version
+            compiler: out_file.metadata.compiler.version,
+            deployedAtBlock: self.deployed_at_block
         })
     }
 

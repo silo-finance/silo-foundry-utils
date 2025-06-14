@@ -20,6 +20,7 @@ abstract contract DeployerCommon is AddressesCollection {
         string forgeOutDir; // The forge `out` directory
         address addr; // The address of the deployed smart contract
         bool synced; // The flag shows whether the smart contract is already synced or not
+        uint256 deployedAtBlock; // The block number when the smart contract was deployed
     }
 
     // Note: IS_SCRIPT() must return true.
@@ -62,8 +63,13 @@ abstract contract DeployerCommon is AddressesCollection {
     }
 
     /// @notice Register deployed smart contract
-    function _registerDeployment(address _deployedAddress, string memory _fileName) internal {
-        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir());
+    function _registerDeployment(address _deployedAddress, string memory _fileName) internal virtual {
+        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir(), 0);
+    }
+
+    /// @notice Register deployed smart contract
+    function _registerDeployment(address _deployedAddress, string memory _fileName, uint256 _deployedAtBlock) internal virtual {
+        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir(), _deployedAtBlock);
     }
 
     /// @notice Register deployed smart contract
@@ -71,9 +77,10 @@ abstract contract DeployerCommon is AddressesCollection {
         address _deployedAddress,
         string memory _subDir,
         string memory _fileName,
-        string memory _outDir
-    ) internal {
-        /// @dev Revert on an attemp to register `solidity` deployment with specifying the Forge `out` dir
+        string memory _outDir,
+        uint256 _deployedAtBlock
+    ) internal virtual {
+        /// @dev Revert on an attempt to register `solidity` deployment with specifying the Forge `out` dir
         if (bytes(_outDir).length == 0) revert("ForgeOutDirIsRequired");
 
         string memory empty;
@@ -88,7 +95,8 @@ abstract contract DeployerCommon is AddressesCollection {
                 contractABI: empty,
                 compilerVersion: empty,
                 forgeOutDir: _outDir,
-                synced: false
+                synced: false,
+                deployedAtBlock: _deployedAtBlock
             })
         );
 
@@ -96,7 +104,7 @@ abstract contract DeployerCommon is AddressesCollection {
     }
 
     /// @notice Synchronize deployments by calling an external script
-    function _syncDeployments() internal {
+    function _syncDeployments() internal virtual {
         uint256 totalDeployments = _deployments.length;
 
         for (uint256 i = 0; i < totalDeployments; i++) {
