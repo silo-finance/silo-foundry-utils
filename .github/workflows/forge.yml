@@ -24,13 +24,13 @@ jobs:
 
       - name: Install Vyper compiler
         run: |
-          pip install vyper==0.3.7
+          pip install vyper==0.4.2
           vyper --version
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: stable
 
       - name: Forge fmt
         run: forge fmt --check
@@ -38,7 +38,7 @@ jobs:
       - name: Run Forge build
         run: |
           forge --version
-          forge build --sizes
+          forge build
 
       - name: Run Cargo build
         run: |
