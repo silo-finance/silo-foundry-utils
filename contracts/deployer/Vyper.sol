@@ -43,7 +43,8 @@ abstract contract VyperDeployer is DeployerCommon {
                 contractABI: contractABI,
                 compilerVersion: compilerVersion,
                 forgeOutDir: empty,
-                synced: false
+                synced: false,
+                deployedAtBlock: 0
             })
         );
 
@@ -51,7 +52,7 @@ abstract contract VyperDeployer is DeployerCommon {
     }
 
     ///@notice Compiles a Vyper contract with constructor arguments
-    /// and returns the address that the contract was deployeod to
+    /// and returns the address that the contract was deployed to
     ///@notice If deployment fails, an error will be thrown
     ///@param _filePath - The file name of the Vyper contract.
     /// For example, the file name for "SimpleStore.vy" is "SimpleStore"
