@@ -4,6 +4,7 @@ someNumber: public(uint256)
 multiplier: public(uint256)
 
 @external
+@payable
 def __init__(_mult: uint256):
     self.multiplier = _mult
 
