@@ -1,4 +1,4 @@
-# @version 0.3.7
+# @version 0.4.2
 
 someNumber: public(uint256)
 multiplier: public(uint256)

@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Vyper compiler
         run: |
-          pip install vyper==0.3.7
+          pip install vyper==0.4.2
           vyper --version
 
       - name: Install Foundry
