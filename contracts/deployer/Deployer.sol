@@ -7,7 +7,7 @@ import {ChainsLib} from "../lib/ChainsLib.sol";
 
 abstract contract Deployer is VyperDeployer {
     function _syncSolidityDeployments(Deployment storage deployment) internal override {
-        uint256 cmdLen = 12;
+        uint256 cmdLen = 14;
 
         if (bytes(deployment.deploymentsSubDir).length != 0) {
             cmdLen += 2;
@@ -15,8 +15,6 @@ abstract contract Deployer is VyperDeployer {
 
         uint256 i;
         string[] memory cmds = new string[](cmdLen);
-        cmds[10] = "--deployed_at_block";
-        cmds[11] = vm.toString(deployment.deployedAtBlock);
         cmds[i++] = "./silo-foundry-utils";
         cmds[i++] = "sync";
         cmds[i++] = "--network";
@@ -29,8 +27,10 @@ abstract contract Deployer is VyperDeployer {
         cmds[i++] = vm.toString(deployment.addr);
         cmds[i++] = "--out_dir";
         cmds[i++] = deployment.forgeOutDir;
+        cmds[i++] = "--deployed_at_block";
+        cmds[i++] = vm.toString(deployment.deployedAtBlock);
 
-        if (bytes(deployment.deploymentsSubDir).length != 0) {
+    if (bytes(deployment.deploymentsSubDir).length != 0) {
             cmds[i++] = "--deployments_sub_dir";
             cmds[i++] = deployment.deploymentsSubDir;
         }
