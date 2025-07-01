@@ -83,7 +83,9 @@ abstract contract DeployerCommon is AddressesCollection {
         internal
         virtual
     {
-        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _fileName, _forgeOutDir(), _deployedAtBlock);
+        _registerDeployment(
+            _deployedAddress, _deploymentsSubDir(), _fileName, _fileName, _forgeOutDir(), _deployedAtBlock
+        );
     }
 
     /// @notice Register deployed smart contract
