@@ -5,7 +5,7 @@ pragma abicoder v2;
 import {VyperDeployer} from "./Vyper.sol";
 import {ChainsLib} from "../lib/ChainsLib.sol";
 
-contract Deployer is VyperDeployer {
+abstract contract Deployer is VyperDeployer {
     function _syncSolidityDeployments(Deployment storage deployment) internal override {
         uint256 cmdLen = 12;
 
