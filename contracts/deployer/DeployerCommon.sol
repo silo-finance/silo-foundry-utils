@@ -12,6 +12,7 @@ abstract contract DeployerCommon is AddressesCollection {
     /// @dev The struct that describes the deployment
     struct Deployment {
         string name; // The name of the smart contract with an extension: `Counter.vy`
+        string fileName; // The name of the file, under witch data will be saved: `CounterV2.sol`
         string deploymentsSubDir; // The directory for the ABI allocation `deploymentsSubDir/deployments/<network>`
         string bytecode; // The bytecode of the deployed smart contract
         string deployedByteCode; // The deployed bytecode of the deployed smart contract
@@ -64,7 +65,17 @@ abstract contract DeployerCommon is AddressesCollection {
 
     /// @notice Register deployed smart contract
     function _registerDeployment(address _deployedAddress, string memory _fileName) internal virtual {
-        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir(), 0);
+        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _fileName, _forgeOutDir(), 0);
+    }
+
+    function _registerDeployment(
+        address _deployedAddress,
+        string memory _smartContractNameSol,
+        string memory _customFileName
+    ) internal virtual {
+        _registerDeployment(
+            _deployedAddress, _deploymentsSubDir(), _smartContractNameSol, _customFileName, _forgeOutDir(), 0
+        );
     }
 
     /// @notice Register deployed smart contract
@@ -72,14 +83,15 @@ abstract contract DeployerCommon is AddressesCollection {
         internal
         virtual
     {
-        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _forgeOutDir(), _deployedAtBlock);
+        _registerDeployment(_deployedAddress, _deploymentsSubDir(), _fileName, _fileName, _forgeOutDir(), _deployedAtBlock);
     }
 
     /// @notice Register deployed smart contract
     function _registerDeployment(
         address _deployedAddress,
         string memory _subDir,
-        string memory _fileName,
+        string memory _smartContractNameSol,
+        string memory _customFileName,
         string memory _outDir,
         uint256 _deployedAtBlock
     ) internal virtual {
@@ -90,7 +102,8 @@ abstract contract DeployerCommon is AddressesCollection {
 
         _deployments.push(
             Deployment({
-                name: _fileName,
+                name: _smartContractNameSol,
+                fileName: _customFileName,
                 deploymentsSubDir: _subDir,
                 addr: _deployedAddress,
                 bytecode: empty,
@@ -116,7 +129,7 @@ abstract contract DeployerCommon is AddressesCollection {
             if (deployment.synced) continue;
 
             // allocate a deployed address into the shared memory
-            setAddress(deployment.name, deployment.addr);
+            setAddress(deployment.fileName, deployment.addr);
 
             deployment.synced = true;
 
@@ -133,9 +146,9 @@ abstract contract DeployerCommon is AddressesCollection {
         }
     }
 
-    function _syncSolidityDeployments(Deployment storage deployment) internal virtual {}
+    function _syncSolidityDeployments(Deployment storage deployment) internal virtual;
 
-    function _syncVyperDeployments(Deployment storage deployment) internal virtual {}
+    function _syncVyperDeployments(Deployment storage deployment) internal virtual;
 
     function _forgeOutDir() internal view virtual returns (string memory);
 

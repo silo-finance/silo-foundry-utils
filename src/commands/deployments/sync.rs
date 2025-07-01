@@ -88,6 +88,9 @@ pub struct Sync {
     /// Relative file path
     #[arg(long = "file")]
     pub file: String,
+    /// Relative output file path
+    #[arg(long = "output")]
+    pub output: String,
     /// Deployed contract address
     #[arg(long = "address")]
     pub address: String,
@@ -124,6 +127,7 @@ cargo run -- sync \
     --network 31337 \
     --out_dir out \
     --file Counter.sol \
+    --output Counter.sol \
     --address 0x5FbDB2315678afecb367f032d93F642f64180aa3
 */
 impl Sync {
@@ -141,7 +145,7 @@ impl Sync {
     fn  save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let deployments_dir = self.resolve_deployments_dir().unwrap();
 
-        let mut file_name: String = self.file.clone();
+        let mut file_name: String = self.output.clone();
         file_name.push_str(&".json".to_string());
 
         let file_path = deployments_dir.join(file_name);
