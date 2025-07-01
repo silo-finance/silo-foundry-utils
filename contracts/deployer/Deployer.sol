@@ -30,7 +30,7 @@ abstract contract Deployer is VyperDeployer {
         cmds[i++] = "--deployed_at_block";
         cmds[i++] = vm.toString(deployment.deployedAtBlock);
 
-    if (bytes(deployment.deploymentsSubDir).length != 0) {
+        if (bytes(deployment.deploymentsSubDir).length != 0) {
             cmds[i++] = "--deployments_sub_dir";
             cmds[i++] = deployment.deploymentsSubDir;
         }
