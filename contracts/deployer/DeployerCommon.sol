@@ -137,9 +137,9 @@ abstract contract DeployerCommon is AddressesCollection {
 
     function _syncVyperDeployments(Deployment storage deployment) internal virtual {}
 
-    function _forgeOutDir() internal pure virtual returns (string memory) {}
+    function _forgeOutDir() internal view virtual returns (string memory);
 
-    function _deploymentsSubDir() internal pure virtual returns (string memory) {}
+    function _deploymentsSubDir() internal view virtual returns (string memory);
 
-    function _contractBaseDir() internal pure virtual returns (string memory) {}
+    function _contractBaseDir() internal view virtual returns (string memory);
 }
