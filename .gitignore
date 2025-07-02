@@ -1,5 +1,6 @@
 .vscode
 bash/.anvil-pid.txt
+.idea
 
 # Compiler files
 cache/
