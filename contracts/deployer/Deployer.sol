@@ -5,31 +5,34 @@ pragma abicoder v2;
 import {VyperDeployer} from "./Vyper.sol";
 import {ChainsLib} from "../lib/ChainsLib.sol";
 
-contract Deployer is VyperDeployer {
+abstract contract Deployer is VyperDeployer {
     function _syncSolidityDeployments(Deployment storage deployment) internal override {
-        uint256 cmdLen = 12;
+        uint256 cmdLen = 14;
 
         if (bytes(deployment.deploymentsSubDir).length != 0) {
             cmdLen += 2;
         }
 
+        uint256 i;
         string[] memory cmds = new string[](cmdLen);
-        cmds[0] = "./silo-foundry-utils";
-        cmds[1] = "sync";
-        cmds[2] = "--network";
-        cmds[3] = ChainsLib.chainAlias();
-        cmds[4] = "--file";
-        cmds[5] = deployment.name;
-        cmds[6] = "--address";
-        cmds[7] = vm.toString(deployment.addr);
-        cmds[8] = "--out_dir";
-        cmds[9] = deployment.forgeOutDir;
-        cmds[10] = "--deployed_at_block";
-        cmds[11] = vm.toString(deployment.deployedAtBlock);
+        cmds[i++] = "./silo-foundry-utils";
+        cmds[i++] = "sync";
+        cmds[i++] = "--network";
+        cmds[i++] = ChainsLib.chainAlias();
+        cmds[i++] = "--file";
+        cmds[i++] = deployment.name;
+        cmds[i++] = "--output";
+        cmds[i++] = deployment.fileName;
+        cmds[i++] = "--address";
+        cmds[i++] = vm.toString(deployment.addr);
+        cmds[i++] = "--out_dir";
+        cmds[i++] = deployment.forgeOutDir;
+        cmds[i++] = "--deployed_at_block";
+        cmds[i++] = vm.toString(deployment.deployedAtBlock);
 
         if (bytes(deployment.deploymentsSubDir).length != 0) {
-            cmds[12] = "--deployments_sub_dir";
-            cmds[13] = deployment.deploymentsSubDir;
+            cmds[i++] = "--deployments_sub_dir";
+            cmds[i++] = deployment.deploymentsSubDir;
         }
 
         vm.ffi(cmds);
