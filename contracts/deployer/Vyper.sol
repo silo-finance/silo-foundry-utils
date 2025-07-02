@@ -36,6 +36,7 @@ abstract contract VyperDeployer is DeployerCommon {
         _deployments.push(
             Deployment({
                 name: _fileName,
+                fileName: _fileName,
                 deploymentsSubDir: _subDir,
                 addr: deployedAddress,
                 bytecode: bytecode,
