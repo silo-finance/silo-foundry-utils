@@ -38,14 +38,14 @@ abstract contract VyperDeployer is DeployerCommon {
                 name: _fileName,
                 fileName: _fileName,
                 deploymentsSubDir: _subDir,
-                addr : deployedAddress,
-                bytecode : bytecode,
-                deployedByteCode : deployedByteCode,
-                contractABI : contractABI,
-                compilerVersion : compilerVersion,
-                forgeOutDir : empty,
-                synced : false,
-            deployedAtBlock : 0
+                addr: deployedAddress,
+                bytecode: bytecode,
+                deployedByteCode: deployedByteCode,
+                contractABI: contractABI,
+                compilerVersion: compilerVersion,
+                forgeOutDir: empty,
+                synced: false,
+                deployedAtBlock: 0
             })
         );
 
