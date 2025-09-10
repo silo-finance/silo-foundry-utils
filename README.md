@@ -56,6 +56,13 @@
    forge test --match-contract DeploySolidityTest --ffi -vvv && ./bash/kill-anvil.sh
    ```
 
+## Release
+
+- open release 
+- update version in `Cargo.toml`
+- run `cargo build --release` to double check all is fine
+- finish relase
+
 ## Utilities
 
 * [Vyper deployer](docs/VyperDeployer.md)
