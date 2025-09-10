@@ -25,6 +25,9 @@ pub struct KeyValJson {
 }
 
 /*
+This tool writes key-value pairs to JSON files with automatic sorting by keys.
+
+Examples:
 cargo run -- key-val-json \
     --key2 UniV3-ETH-USDC-0.3 \
     --file created-oracles.json \
@@ -41,6 +44,12 @@ cargo run -- key-val-json \
     --key2 UniV3-ETH-USDC-0.2 \
     --file created-oracles.json \
     --value 0xC03aaA39b223FE8D0A0e5C4F27eAD9083C756Cc3
+
+Features:
+- Supports both flat and nested JSON structures
+- Automatically sorts all keys alphabetically when saving
+- Recursively sorts nested objects
+- Adds newline at end of file
 */
 impl KeyValJson {
     pub fn save_value(&self) -> Result<(), Box<dyn std::error::Error>> {
@@ -66,7 +75,10 @@ impl KeyValJson {
             }
         }
 
-        let mut file_data = serde_json::to_string_pretty(&file_data).unwrap();
+        // Sort the JSON data by keys before writing
+        let sorted_data = self.sort_json_by_keys(&file_data);
+
+        let mut file_data = serde_json::to_string_pretty(&sorted_data).unwrap();
         file_data.push_str(&"\n".to_string());
 
         let result = std::fs::write(
@@ -102,13 +114,39 @@ impl KeyValJson {
             Ok(_) => {},
             Err(_) => {
                 let data = Map::new();
+                let sorted_data = self.sort_json_by_keys(&Value::Object(data));
                 std::fs::write(
                     file.clone(),
-                    serde_json::to_string_pretty(&Value::Object(data)).unwrap(),
+                    serde_json::to_string_pretty(&sorted_data).unwrap(),
                 )?;
             },
         }
 
         Ok(file)
+    }
+
+    /// Recursively sort JSON objects by their keys alphabetically
+    fn sort_json_by_keys(&self, value: &Value) -> Value {
+        match value {
+            Value::Object(map) => {
+                let mut sorted_map = Map::new();
+                let mut keys: Vec<_> = map.keys().collect();
+                keys.sort(); // Sort keys alphabetically
+                
+                for key in keys {
+                    let sorted_value = self.sort_json_by_keys(&map[key]);
+                    sorted_map.insert(key.clone(), sorted_value);
+                }
+                
+                Value::Object(sorted_map)
+            }
+            Value::Array(arr) => {
+                let sorted_arr: Vec<Value> = arr.iter()
+                    .map(|v| self.sort_json_by_keys(v))
+                    .collect();
+                Value::Array(sorted_arr)
+            }
+            _ => value.clone(), // For primitives (String, Number, Bool, Null), just clone
+        }
     }
 }

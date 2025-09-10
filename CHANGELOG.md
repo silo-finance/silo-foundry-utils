@@ -6,10 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-### [0.0.21] - 2025-07-02
+## [0.0.23] - 2025-09-10
+### Updated
+- save sorted json data 
+
+## [0.0.21] - 2025-07-02
 ### Fixed
 - fix version number
 
-### [0.0.20] - 2025-07-02
+## [0.0.20] - 2025-07-02
 ### Added
 - allow to store deployment data under custom name
