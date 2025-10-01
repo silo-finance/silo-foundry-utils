@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [0.0.25] - 2025-10-01
+### Added
+- add support fox XDC Apothem (testnet) blockchain
+
 ## [0.0.24] - 2025-09-30
 ### Added
 - add support fox XDC blockchain
