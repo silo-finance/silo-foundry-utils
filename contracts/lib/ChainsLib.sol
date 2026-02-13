@@ -15,8 +15,8 @@ library ChainsLib {
     uint256 public constant POLYGON_MUMBAI_CHAIN_ID = 80001;
     uint256 public constant AVALANCHE_CHAIN_ID = 43114;
     uint256 public constant AVALANCHE_FUJI_CHAIN_ID = 43113;
-    uint256 public constant BNB_SMART_CHAIN_CHAIN_ID = 56;
-    uint256 public constant BNB_SMART_CHAIN_TESTNET_CHAIN_ID = 97;
+    uint256 public constant BNB_CHAIN_ID = 56;
+    uint256 public constant BNB_TESTNET_CHAIN_ID = 97;
     uint256 public constant GNOSIS_CHAIN_ID = 100;
     uint256 public constant SONIC_CHAIN_ID = 146;
     uint256 public constant INK_CHAIN_ID = 57073;
@@ -38,8 +38,8 @@ library ChainsLib {
     string public constant POLYGON_MUMBAI_ALIAS = "polygon_mumbai";
     string public constant AVALANCHE_ALIAS = "avalanche";
     string public constant AVALANCHE_FUJI_ALIAS = "avalanche_fuji";
-    string public constant BNB_SMART_CHAIN_ALIAS = "bnb_smart_chain";
-    string public constant BNB_SMART_CHAIN_TESTNET_ALIAS = "bnb_smart_chain_testnet";
+    string public constant BNB_ALIAS = "bnb";
+    string public constant BNB_TESTNET_ALIAS = "bnb_testnet";
     string public constant GNOSIS_CHAIN_ALIAS = "gnosis_chain";
     string public constant SONIC_ALIAS = "sonic";
     string public constant INK_ALIAS = "ink";
@@ -83,10 +83,10 @@ library ChainsLib {
             result = AVALANCHE_ALIAS;
         } else if (_chainId == AVALANCHE_FUJI_CHAIN_ID) {
             result = AVALANCHE_FUJI_ALIAS;
-        } else if (_chainId == BNB_SMART_CHAIN_CHAIN_ID) {
-            result = BNB_SMART_CHAIN_ALIAS;
-        } else if (_chainId == BNB_SMART_CHAIN_TESTNET_CHAIN_ID) {
-            result = BNB_SMART_CHAIN_TESTNET_ALIAS;
+        } else if (_chainId == BNB_CHAIN_ID) {
+            result = BNB_ALIAS;
+        } else if (_chainId == BNB_TESTNET_CHAIN_ID) {
+            result = BNB_TESTNET_ALIAS;
         } else if (_chainId == GNOSIS_CHAIN_ID) {
             result = GNOSIS_CHAIN_ALIAS;
         } else if (_chainId == SONIC_CHAIN_ID) {
