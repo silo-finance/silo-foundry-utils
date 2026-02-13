@@ -25,11 +25,12 @@ library Deployments {
 
     /// @dev Allocate in the `shared memory` a flag that marks wether the deployments synchronization in enabled or not
     function mockDeploymentsSyncStatus(bool _flag) internal {
-        VmLib.vm().mockCall(
-            DEPLOYER_SHARED_MEMORY,
-            abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector),
-            abi.encode(_flag)
-        );
+        VmLib.vm()
+            .mockCall(
+                DEPLOYER_SHARED_MEMORY,
+                abi.encodePacked(IDeployerSharedMemory.deploymentsSyncDisabled.selector),
+                abi.encode(_flag)
+            );
     }
 
     /// @dev The developer can operate from scripts if it is needed to synchronize deployments.
