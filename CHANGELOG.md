@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [0.0.27] - 2026-02-13
+### Added
+- add support fox OKX blockchain
+
 ## [0.0.26] - 2025-10-14
 ### Added
 - add support fox Injective blockchain
