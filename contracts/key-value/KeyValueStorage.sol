@@ -40,10 +40,7 @@ library KeyValueStorage {
         }
     }
 
-    function getString(string memory _file, string memory _key1, string memory _key2)
-        internal
-        returns (string memory)
-    {
+    function getString(string memory _file, string memory _key1, string memory _key2) internal returns (string memory) {
         bytes memory data = get(_file, _key1, _key2);
         if (keccak256(data) == _EMPTY_RESULT) {
             return "";
@@ -71,10 +68,7 @@ library KeyValueStorage {
         return Utils.stringToUint(string(get(_file, _key1, _key2)));
     }
 
-    function get(string memory _file, string memory _key1, string memory _key2)
-        internal
-        returns (bytes memory result)
-    {
+    function get(string memory _file, string memory _key1, string memory _key2) internal returns (bytes memory result) {
         uint256 cmdLen = bytes(_key1).length != 0 ? 8 : 6;
 
         string[] memory cmds = new string[](cmdLen);

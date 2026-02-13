@@ -27,11 +27,12 @@ library AddrLib {
     /// @param _key The key to allocating/resolving an address
     /// @param _value An address that should be allocated
     function setAddress(uint256 _chainId, string memory _key, address _value) internal {
-        VmLib.vm().mockCall(
-            _ADDRESS_COLLECTION,
-            Utils.encodeGetAddressCall(IAddressCollection.getAddress.selector, _chainId, _key),
-            abi.encode(_value)
-        );
+        VmLib.vm()
+            .mockCall(
+                _ADDRESS_COLLECTION,
+                Utils.encodeGetAddressCall(IAddressCollection.getAddress.selector, _chainId, _key),
+                abi.encode(_value)
+            );
 
         VmLib.vm().label(_value, _key);
     }
