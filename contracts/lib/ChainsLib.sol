@@ -23,6 +23,7 @@ library ChainsLib {
     uint256 public constant XDC_CHAIN_ID = 50;
     uint256 public constant XDC_APOTHEM_CHAIN_ID = 51;
     uint256 public constant INJECTIVE_CHAIN_ID = 1776;
+    uint256 public constant OKX_CHAIN_ID = 196;
 
     string public constant ANVIL_ALIAS = "anvil";
     string public constant MAINNET_ALIAS = "mainnet";
@@ -45,6 +46,7 @@ library ChainsLib {
     string public constant XDC_ALIAS = "xdc";
     string public constant XDC_APOTHEM_ALIAS = "xdc_apothem";
     string public constant INJECTIVE_ALIAS = "injective";
+    string public constant OKX_ALIAS = "okx";
 
     function chainAlias() internal view returns (string memory) {
         uint256 chainId = getChainId();
@@ -97,6 +99,8 @@ library ChainsLib {
             result = XDC_APOTHEM_ALIAS;
         } else if (_chainId == INJECTIVE_CHAIN_ID) {
             result = INJECTIVE_ALIAS;
+        } else if (_chainId == OKX_CHAIN_ID) {
+            result = OKX_ALIAS;
         }
 
         return result;
