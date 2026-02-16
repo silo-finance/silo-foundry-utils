@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [0.0.29] - 2026-02-16
+### Added
+- add support fox Base blockchain
+
 ## [0.0.28] - 2026-02-13
 ### Changed
 - remove "smart chain" from BNB names
