@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [0.0.31] - 2026-09-21
+### Added
+- add support fox Pharos blockchain
+
 ## [0.0.30] - 2026-04-27
 ### Added
 - add support fox MegaETH and Mantle blockchain
