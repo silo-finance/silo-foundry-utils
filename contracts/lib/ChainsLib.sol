@@ -27,6 +27,7 @@ library ChainsLib {
     uint256 public constant BASE_CHAIN_ID = 8453;
     uint256 public constant MEGAETH_CHAIN_ID = 4326;
     uint256 public constant MANTLE_CHAIN_ID = 5000;
+    uint256 public constant PHAROS_CHAIN_ID = 1672;
 
     string public constant ANVIL_ALIAS = "anvil";
     string public constant MAINNET_ALIAS = "mainnet";
@@ -53,6 +54,7 @@ library ChainsLib {
     string public constant BASE_ALIAS = "base";
     string public constant MEGAETH_ALIAS = "megaeth";
     string public constant MANTLE_ALIAS = "mantle";
+    string public constant PHAROS_ALIAS = "pharos";
 
     function chainAlias() internal view returns (string memory) {
         uint256 chainId = getChainId();
@@ -113,6 +115,8 @@ library ChainsLib {
             result = MEGAETH_ALIAS;
         } else if (_chainId == MANTLE_CHAIN_ID) {
             result = MANTLE_ALIAS;
+        } else if (_chainId == PHAROS_CHAIN_ID) {
+            result = PHAROS_ALIAS;
         }
 
         return result;
